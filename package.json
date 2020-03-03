@@ -1,0 +1,17 @@
+{
+  "name": "makando",
+  "version": "1.0.0",
+  "description": "Food Delivery APP ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "food",
+    "delivery",
+    "app",
+    "makando"
+  ],
+  "author": "alen1945",
+  "license": "ISC"
+}
