@@ -18,6 +18,4 @@ function checkAuthToken (req, res, next) {
   }
 }
 
-module.exports = {
-  checkAuthToken
-}
+module.exports = checkAuthToken
