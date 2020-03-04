@@ -6,11 +6,12 @@ const db = mysql.createConnection({
   host: process.env.DB_SERVER,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  multipleStatements: true
+  /* To Run Multiple  Query */
+  multipleStatements: true  
 })
 db.connect()
 
-/* Always use DB_NAME on .env Before RUN db.query() */
+/* To use DB_NAME on .env Before RUN db.query() */
 const runQuery = (query, callBack) => {
   query = `use ${process.env.DB_NAME};` + query
   return db.query(query, callBack)

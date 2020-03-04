@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const { runQuery } = require('../config/db')
 const { RegisterUser } = require('../models/users')
 const { validateUsernamePassword } = require('../utility/validate')
+
 exports.RegisterUser = async (req, res, next) => {
   try {
     const { username, password } = req.body
@@ -21,7 +24,40 @@ exports.RegisterUser = async (req, res, next) => {
     console.log(e)
     res.status(202).send({
       success: false,
-      msg: e.message || 'Internal Server Error'
+      msg: e.message
+    })
+  }
+}
+
+exports.LoginUser = async (req, res, next) => {
+  try {
+    const { username, password } = req.body
+    if (username && password) {
+      const dataLogin = await new Promise((resolve, reject) => {
+        runQuery(`SELECT _id,username,password FROM users WHERE username='${username}'`,
+          (err, results) => {
+            if (!err && results[1].length > 0 && bcrypt.compareSync(password, results[1][0].password)) {
+              const userData = { id: results[1][0]._id, username }
+              resolve(userData)
+            } else {
+              reject(new Error(err || 'Username Or Password Wrong'))
+            }
+          })
+      })
+      const token = jwt.sign(dataLogin, process.env.APP_KEY, { expiresIn: '1H' })
+      res.send({
+        success: true,
+        msg: 'Login Success',
+        data: {
+          token
+        }
+      })
+    }
+  } catch (e) {
+    console.log(e)
+    res.status(401).send({
+      success: false,
+      msg: e.message
     })
   }
 }
