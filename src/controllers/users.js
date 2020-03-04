@@ -7,18 +7,22 @@ const { validateUsernamePassword } = require('../utility/validate')
 exports.RegisterUser = async (req, res, next) => {
   try {
     const { username, password } = req.body
-    const validate = validateUsernamePassword(username, password)
-    if (validate.val) {
-      const hashPassword = bcrypt.hashSync(password)
-      const statusRegister = await RegisterUser({ username, password: hashPassword })
-      if (statusRegister) {
-        res.status(201).send({
-          success: true,
-          msg: 'Register Success, Please Login'
-        })
+    if (username && password) {
+      const validate = validateUsernamePassword(username, password)
+      if (validate.val) {
+        const hashPassword = bcrypt.hashSync(password)
+        const statusRegister = await RegisterUser({ username, password: hashPassword })
+        if (statusRegister) {
+          res.status(201).send({
+            success: true,
+            msg: 'Register Success, Please Login'
+          })
+        }
+      } else {
+        throw new Error(validate.message)
       }
     } else {
-      throw new Error(validate.message)
+      throw new Error('Username and Password is Required')
     }
   } catch (e) {
     console.log(e)
@@ -52,6 +56,8 @@ exports.LoginUser = async (req, res, next) => {
           token
         }
       })
+    } else {
+      throw new Error('Username and Password is Required')
     }
   } catch (e) {
     console.log(e)
