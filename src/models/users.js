@@ -16,8 +16,13 @@ exports.RegisterUser = (data) => {
                 reject(new Error(err))
                 console.log(results[1].solutions)
               } else {
-                console.log(results[1])
-                resolve(true)
+                runQuery(`INSERT INTO userProfile(id_user) VALUES(${results[1].insertId})`,
+                  (err, results, fields) => {
+                    if (!err) {
+                      resolve(true)
+                    }
+                    console.log(err)
+                  })
               }
             })
         } else {
