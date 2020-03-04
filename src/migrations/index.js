@@ -11,7 +11,7 @@ const dbName = process.env.DB_NAME
 db.query(`
  CREATE DATABASE IF NOT EXISTS ${dbName};
  use ${dbName};
- ${tomigrate.map(v =>  `${v}`).join(';')}
+${tomigrate.map(v => `${v}`).join(';')}
 `, (err, results, field) => {
   if (err) {
     console.log(err)
