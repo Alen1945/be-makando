@@ -14,6 +14,20 @@ exports.GetUser = (id) => {
   })
 }
 
+exports.GetProfile = (id) =>{
+  return new Promise((resolve, reject) => {
+    runQuery(`SELECT u._id,u.username,p.fullname, p.email,p.gender,p.address from userProfile p INNER JOIN users u ON p.id_user=${id}`,
+      (error, results, fields) => {
+        if (error) {
+          reject(new Error(error))
+        } else {
+          resolve(results[1][0])
+        }
+      }
+    )
+  })
+}
+
 exports.RegisterUser = (data) => {
   return new Promise((resolve, reject) => {
     const { username, password } = data

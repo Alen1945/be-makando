@@ -1,9 +1,26 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { runQuery } = require('../config/db')
-const { GetUser, RegisterUser, UpdateProfile } = require('../models/users')
+const { GetUser, RegisterUser, UpdateProfile, GetProfile } = require('../models/users')
 const { validateUsernamePassword } = require('../utility/validate')
 
+exports.GetProfile = async (req,res,next) => {
+  try {
+    const profileUser = await GetProfile(req.auth.id)
+    if (profileUser) {
+      res.status(200).send({
+        success: true,
+        data: profileUser
+      })
+    }
+    throw new Error('Something Wrong')
+  } catch (e) {
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
 exports.RegisterUser = async (req, res, next) => {
   try {
     const { username, password } = req.body

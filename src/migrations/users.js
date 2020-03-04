@@ -15,7 +15,7 @@ const userProfile = `
     id_user INT(11) UNSIGNED NOT NULL,
     fullname VARCHAR(70) NULL,
     email VARCHAR(40) NULL,
-    gender ENUM('male','female','other') DEFAULT 'other',
+    gender ENUM('male','female','other') DEFAULT NULL,
     address TEXT DEFAULT NULL,
     picture TEXT DEFAULT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
