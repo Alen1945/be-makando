@@ -10,8 +10,8 @@ const users = `
 const userProfile = `
   CREATE TABLE IF NOT EXISTS usersProfile(
     _id INT(11) PRIMARY KEY AUTO_INCREMENT,
-    id_user INT(11) FOREIGN KEY REFERENCES users(_id)
-    fullname VARCHAR(70) NOT NULL
+    id_user INT(11) NOT NULL,
+    fullname VARCHAR(70) NOT NULL,
     email VARCHAR(40) NOT NULL,
     gender ENUM('male','female','other') DEFAULT 'other',
     address TEXT DEFAULT NULL,
