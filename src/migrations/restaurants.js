@@ -1,6 +1,7 @@
 const restaurants = `
   CREATE TABLE IF NOT EXISTS restaurants(
   _id int(11) PRIMARY KEY AUTO_INCREMENT,
+  id_owner INT(11) NOT NULL,
   name VARCHAR(40) NOT NULL,
   logo TEXT,
   addres TEXT,

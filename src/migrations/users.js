@@ -10,11 +10,11 @@ const users = `
 )
 `
 const userProfile = `
-  CREATE TABLE IF NOT EXISTS usersProfile(
+  CREATE TABLE IF NOT EXISTS userProfile(
     _id INT(11) PRIMARY KEY AUTO_INCREMENT,
     id_user INT(11) NOT NULL,
-    fullname VARCHAR(70) NOT NULL,
-    email VARCHAR(40) NOT NULL,
+    fullname VARCHAR(70) NULL,
+    email VARCHAR(40) NULL,
     gender ENUM('male','female','other') DEFAULT 'other',
     address TEXT DEFAULT NULL,
     picture TEXT DEFAULT NULL,
