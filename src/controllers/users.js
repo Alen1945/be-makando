@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { runQuery } = require('../config/db')
-const { GetUser, RegisterUser, UpdateProfile, GetProfile } = require('../models/users')
+const { GetUser, RegisterUser, UpdateProfile, GetProfile, DeleteUser } = require('../models/users')
 const { validateUsernamePassword } = require('../utility/validate')
 
 exports.GetProfile = async (req,res,next) => {
@@ -110,18 +110,36 @@ exports.UpdateUser = async (req, res, next) => {
         throw new Error('Old Password Not Match')
       }
       params.push({ keys: 'password', value: bcrypt.hashSync(new_password) })
-      const update = await UpdateProfile(id, params)
-      if (update) {
-        res.send({
-          success: true,
-          msg: `User ${req.auth.username} has been updated`
-        })
-      } else {
-        throw new Error('Failed to update user!')
-      }
+    }
+    const update = await UpdateProfile(id, params)
+    if (update) {
+      res.send({
+        success: true,
+        msg: `User ${req.auth.username} has been updated`
+      })
+    } else {
+      throw new Error('Failed to update user!')
     }
   } catch (e) {
     console.log(e)
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
+
+exports.DeleteUser = async (req, res, next) => {
+  const { id } = req.auth
+  try {
+    if (!(await DeleteUser(id))) {
+      throw new Error('Failed to Delete User')
+    }
+    res.status(200).send({
+      success: true,
+      msg: 'Success Delete Your Account'
+    })
+  } catch (e) {
     res.status(202).send({
       success: false,
       msg: e.message

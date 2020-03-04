@@ -83,3 +83,18 @@ exports.UpdateProfile = (id, params) => {
     })
   })
 }
+
+exports.DeleteUser = (id) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      DELETE FROM users WHERE _id = ${id};
+      DELETE FROM userProfile WHERE id_user = ${id}
+    `
+    runQuery(query,(err, results, fields) => {
+      if (err) {
+        reject(new Error(err))
+      }
+      resolve(true)
+    })
+  })
+}
