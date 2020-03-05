@@ -110,7 +110,7 @@ exports.DeletRestaurant = async (req, res, next) => {
     console.log(e)
     res.status(202).send({
       success: false,
-      msg: e.msg
+      msg: e.message
     })
   }
 }

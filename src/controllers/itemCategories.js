@@ -14,7 +14,7 @@ exports.GetAllCategory = async (req, res, next) => {
         data: false,
         msg: 'Data is Empty'
       })
-    } 
+    }
   } catch (e) {
     console.log(e)
     res.status(202).send({
@@ -108,7 +108,7 @@ exports.DeleteCategory = async (req, res, next) => {
     console.log(e)
     res.status(202).send({
       success: false,
-      msg: e.msg
+      msg: e.message
     })
   }
 }

@@ -59,9 +59,9 @@ exports.LoginUser = async (req, res, next) => {
           (err, results) => {
             if (!err && results[1].length > 0 && bcrypt.compareSync(password, results[1][0].password)) {
               const userData = { id: results[1][0]._id, username }
-              resolve(userData)
+              return resolve(userData)
             } else {
-              reject(new Error(err || 'Username Or Password Wrong'))
+              return reject(new Error(err || 'Username Or Password Wrong'))
             }
           })
       })
