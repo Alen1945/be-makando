@@ -1,6 +1,6 @@
 const { GetRestaurants, CreateRestaurant, UpdateRestaurant, DeletRestaurant } = require('../models/restaurants')
 const { GetUser } = require('../models/users')
-module.exports.GetAllRestaurant = async (req, res, next) => {
+exports.GetAllRestaurant = async (req, res, next) => {
   try {
     const dataRestaurants = await GetRestaurants(false, { p: 'ram' })
     res.status(200).send({
@@ -16,7 +16,7 @@ module.exports.GetAllRestaurant = async (req, res, next) => {
   }
 }
 
-module.exports.GetDetailRestaurant = async (req, res, next) => {
+exports.GetDetailRestaurant = async (req, res, next) => {
   try {
     const dataRestaurant = await GetRestaurants(req.params.id)
     res.status(200).send({
@@ -32,7 +32,7 @@ module.exports.GetDetailRestaurant = async (req, res, next) => {
   }
 }
 
-module.exports.CreateRestaurant = async (req, res, next) => {
+exports.CreateRestaurant = async (req, res, next) => {
   try {
     if (!req.body.id_owner || !req.body.name) {
       throw new Error('id owner and name is required')
@@ -57,7 +57,7 @@ module.exports.CreateRestaurant = async (req, res, next) => {
   }
 }
 
-module.exports.UpdateRestaurant = async (req, res, next) => {
+exports.UpdateRestaurant = async (req, res, next) => {
   try {
     if (!(Object.keys(req.body).length > 0)) {
       throw new Error('Please Defined What you want to update')
@@ -96,7 +96,7 @@ module.exports.UpdateRestaurant = async (req, res, next) => {
   }
 }
 
-module.exports.DeletRestaurant = async (req, res, next) => {
+exports.DeletRestaurant = async (req, res, next) => {
   try {
     const { id } = req.params
     if (!(await DeletRestaurant(id))) {
