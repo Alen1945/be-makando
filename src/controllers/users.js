@@ -4,7 +4,7 @@ const { runQuery } = require('../config/db')
 const { GetUser, RegisterUser, UpdateProfile, GetProfile, DeleteUser } = require('../models/users')
 const { validateUsernamePassword } = require('../utility/validate')
 
-exports.GetProfile = async (req,res,next) => {
+exports.GetProfile = async (req, res, next) => {
   try {
     const profileUser = await GetProfile(req.auth.id)
     if (profileUser) {
@@ -90,7 +90,7 @@ exports.UpdateUser = async (req, res, next) => {
   const fillable = ['username', 'fullname', 'email', 'gender', 'address', 'picture']
   const params = Object.keys(req.body).map((v) => {
     if (v && fillable.includes(v) && req.body[v]) {
-      return {keys: v, value: req.body[v]}
+      return { keys: v, value: req.body[v] }
     } else {
       return null
     }
@@ -99,17 +99,16 @@ exports.UpdateUser = async (req, res, next) => {
     if (req.body.old_password) {
       const user = await GetUser(id)
       const oldPassword = user.password
-      const { new_password, confirm_password } = req.body
-      if (!(new_password && confirm_password)) {
+      if (!(req.body.new_password && req.body.confirm_password)) {
         throw new Error('New Password or Confirm Password Not Defined')
       }
-      if (!(new_password === confirm_password)) {
+      if (!(req.body.new_password === req.body.confirm_password)) {
         throw new Error('Confirm Password Not Match')
       }
       if (!(bcrypt.compareSync(req.body.old_password, oldPassword))) {
         throw new Error('Old Password Not Match')
       }
-      params.push({ keys: 'password', value: bcrypt.hashSync(new_password) })
+      params.push({ keys: 'password', value: bcrypt.hashSync(req.body.new_password) })
     }
     const update = await UpdateProfile(id, params)
     if (update) {
@@ -129,15 +128,32 @@ exports.UpdateUser = async (req, res, next) => {
   }
 }
 
-exports.DeleteUser = async (req, res, next) => {
+exports.DeleteAccount = async (req, res, next) => {
   const { id } = req.auth
+  try {
+    if (!(await DeleteUser(id))) {
+      throw new Error('Failed to Delete Your Account')
+    }
+    res.status(200).send({
+      success: true,
+      msg: 'Success Delete Your Account'
+    })
+  } catch (e) {
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
+exports.DeleteUser = async (req, res, next) => {
+  const { id } = req.params.id
   try {
     if (!(await DeleteUser(id))) {
       throw new Error('Failed to Delete User')
     }
     res.status(200).send({
       success: true,
-      msg: 'Success Delete Your Account'
+      msg: 'Success to Delete User'
     })
   } catch (e) {
     res.status(202).send({

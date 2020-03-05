@@ -14,7 +14,7 @@ exports.GetUser = (id) => {
   })
 }
 
-exports.GetProfile = (id) =>{
+exports.GetProfile = (id) => {
   return new Promise((resolve, reject) => {
     runQuery(`SELECT u._id,u.username,p.fullname, p.email,p.gender,p.address from userProfile p INNER JOIN users u ON p.id_user=${id}`,
       (error, results, fields) => {
@@ -64,16 +64,13 @@ exports.UpdateProfile = (id, params) => {
   return new Promise((resolve, reject) => {
     let query = []
     const paramsUsers = params.slice().filter(v => ['username', 'password'].includes(v.keys))
-    console.log(params)
-    console.log(paramsUsers)
     const paramsProfile = params.slice().filter((v) => ['fullname', 'email', 'gender', 'address', 'picture'].includes(v.keys))
     if (paramsUsers.length > 0) {
       query.push(`UPDATE users SET ${paramsUsers.map(v => `${v.keys} = '${v.value}'`).join(' , ')} WHERE _id=${id}`)
     }
     if (paramsProfile.length > 0) {
-      query.push(`UPDATE userProfile SET ${paramsProfile.map(v => `${v.keys} = '${v.value}'`).join(' , ')} WHERE id_user=${id}`)
+      query.pSush(`UPDATE userProfile SET ${paramsProfile.map(v => `${v.keys} = '${v.value}'`).join(' , ')} WHERE id_user=${id}`)
     }
-    console.log(query)
     runQuery(`${query.map((v) => v).join(';')}`, (err, results, fields) => {
       if (err) {
         reject(new Error(err))
@@ -86,11 +83,7 @@ exports.UpdateProfile = (id, params) => {
 
 exports.DeleteUser = (id) => {
   return new Promise((resolve, reject) => {
-    const query = `
-      DELETE FROM users WHERE _id = ${id};
-      DELETE FROM userProfile WHERE id_user = ${id}
-    `
-    runQuery(query,(err, results, fields) => {
+    runQuery(`DELETE FROM users WHERE _id = ${id}`, (err, results, fields) => {
       if (err) {
         reject(new Error(err))
       }
