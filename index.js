@@ -6,6 +6,7 @@ const app = express()
 const Users = require('./src/routes/users')
 const Restaurants = require('./src/routes/restaurants')
 const itemCategories = require('./src/routes/itemCategories')
+const items = require('./src/routes/items')
 /* Middleware */
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -14,6 +15,8 @@ app.use(bodyParser.json())
 app.use('/users', Users)
 app.use('/restaurants', Restaurants)
 app.use('/categories', itemCategories)
+app.use('/items', items)
+
 
 /* Server Listen */
 const PORT = 4000
