@@ -5,9 +5,9 @@ exports.GetUser = (id) => {
     runQuery(`SELECT * from users WHERE _id=${id}`,
       (error, results, fields) => {
         if (error) {
-          reject(new Error(error))
+          return reject(new Error(error))
         } else {
-          resolve(results[1][0])
+          return resolve(results[1][0])
         }
       }
     )
@@ -19,9 +19,9 @@ exports.GetProfile = (id) => {
     runQuery(`SELECT u._id,u.username,p.fullname, p.email,p.gender,p.address from userProfile p INNER JOIN users u ON p.id_user=${id}`,
       (error, results, fields) => {
         if (error) {
-          reject(new Error(error))
+          return reject(new Error(error))
         } else {
-          resolve(results[1][0])
+          return resolve(results[1][0])
         }
       }
     )
@@ -34,27 +34,27 @@ exports.RegisterUser = (data) => {
     runQuery(`SELECT COUNT(*) AS total FROM users WHERE username = '${username}'`,
       (err, results, fields) => {
         if (err) {
-          reject(new Error(err))
+          return reject(new Error(err))
         }
         const { total } = results[1][0]
         if (!total) {
           runQuery(`INSERT INTO users(username,password) VALUES('${username}','${password}')`,
             (err, results, fields) => {
               if (err) {
-                reject(new Error(err))
                 console.log(results[1].solutions)
+                return reject(new Error(err))
               } else {
                 runQuery(`INSERT INTO userProfile(id_user) VALUES(${results[1].insertId})`,
                   (err, results, fields) => {
                     if (!err) {
-                      resolve(true)
+                      return resolve(true)
                     }
                     console.log(err)
                   })
               }
             })
         } else {
-          reject(new Error('Username Already Exists'))
+          return reject(new Error('Username Already Exists'))
         }
       })
   })
@@ -69,14 +69,14 @@ exports.UpdateProfile = (id, params) => {
       query.push(`UPDATE users SET ${paramsUsers.map(v => `${v.keys} = '${v.value}'`).join(' , ')} WHERE _id=${id}`)
     }
     if (paramsProfile.length > 0) {
-      query.pSush(`UPDATE userProfile SET ${paramsProfile.map(v => `${v.keys} = '${v.value}'`).join(' , ')} WHERE id_user=${id}`)
+      query.push(`UPDATE userProfile SET ${paramsProfile.map(v => `${v.keys} = '${v.value}'`).join(' , ')} WHERE id_user=${id}`)
     }
     runQuery(`${query.map((v) => v).join(';')}`, (err, results, fields) => {
       if (err) {
-        reject(new Error(err))
+        return reject(new Error(err))
       }
       console.log(results)
-      resolve(true)
+      return resolve(true)
     })
   })
 }
@@ -85,9 +85,9 @@ exports.DeleteUser = (id) => {
   return new Promise((resolve, reject) => {
     runQuery(`DELETE FROM users WHERE _id = ${id}`, (err, results, fields) => {
       if (err) {
-        reject(new Error(err))
+        return reject(new Error(err))
       }
-      resolve(true)
+      return resolve(true)
     })
   })
 }

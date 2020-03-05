@@ -5,16 +5,16 @@ exports.GetRestaurants = (id, params) => {
     if (id) {
       runQuery(`SELECT * FROM restaurants WHERE _id =${id}`, (err, results, fields) => {
         if (err) {
-          reject(new Error(err))
+          return reject(new Error(err))
         }
-        resolve(results[1][0])
+        return resolve(results[1][0])
       })
     } else {
       runQuery('SELECT * from restaurants', (err, results, fields) => {
         if (err) {
-          reject(new Error(err))
+          return reject(new Error(err))
         }
-        resolve(results[1])
+        return resolve(results[1])
       })
     }
   })
@@ -32,17 +32,17 @@ exports.CreateRestaurant = (data) => {
     })
     runQuery(`SELECT COUNT(*) AS total FROM users WHERE _id=${data.id_owner}`, (err, results, fields) => {
       if (err || !results[1][0].total) {
-        resolve(err || 'Owner id Not Registered')
+        return resolve(err || 'Owner id Not Registered')
       }
       runQuery(`
       INSERT INTO restaurants(${columns.map(v => v).join(',')}) VALUES(${values.map(v => `'${v}'`).join(',')});
       UPDATE users SET is_admin = 1 WHERE _id=${data.id_owner}
     `, (err, results, fields) => {
         if (err) {
-          reject(new Error(err))
+          return reject(new Error(err))
         }
         console.log(results[1])
-        resolve(results[1].insertId)
+        return resolve(results[1].insertId)
       })
     })
   })
@@ -53,10 +53,10 @@ exports.UpdateRestaurant = (id, params) => {
     runQuery(`UPDATE restaurants SET ${params.map(v => `${v.key} = '${v.value}'`).join(',')} WHERE _id = ${id}`, (err, results, fields) => {
       if (err) {
         console.log(err)
-        reject(new Error(err))
+        return reject(new Error(err))
       }
       console.log(results[1])
-      resolve(true)
+      return resolve(true)
     })
   })
 }
@@ -66,9 +66,9 @@ exports.DeletRestaurant = (id) => {
     runQuery(`DELETE FROM restaurants WHERE _id=${id}`, (err, results, fields) => {
       if (err) {
         console.log(err)
-        reject(new Error(err))
+        return reject(new Error(err))
       }
-      resolve(true)
+      return resolve(true)
     })
   })
 }
