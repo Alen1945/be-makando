@@ -1,4 +1,4 @@
-const { GetItem, CreateItem, UpdateItem } = require('../models/items')
+const { GetItem, CreateItem, UpdateItem, DeleteItem } = require('../models/items')
 const { GetRestaurants } = require('../models/restaurants')
 const { GetUser } = require('../models/users')
 const { GetCategory } = require('../models/itemCategories')
@@ -131,6 +131,38 @@ exports.UpdateItem = async (req, res, next) => {
       })
     }
   } catch (e) {
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
+
+exports.DeleteItem = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const dataItem = await GetItem(id)
+    if (!(dataItem)) {
+      throw new Error(`Item With id ${id} Not Exists`)
+    }
+    const dataRestaurant = await GetRestaurants(dataItem.id_restaurant)
+    const dataUser = await GetUser(req.auth.id)
+
+    if (!(dataUser.is_superadmin || dataUser._id === dataRestaurant.id_owner)) {
+      return res.status(403).send({
+        success: false,
+        msg: 'To Delete Item You Must Owner of Restaurant Or Superadmin'
+      })
+    }
+    if (!(await DeleteItem(id))) {
+      throw new Error(`Failed To item Category With id ${id}`)
+    }
+    return res.status(200).send({
+      success: true,
+      msg: `Success to Delete Items With id ${id}`
+    })
+  } catch (e) {
+    console.log(e)
     res.status(202).send({
       success: false,
       msg: e.message

@@ -45,3 +45,16 @@ exports.UpdateItem = (id, params) => {
     })
   })
 }
+
+exports.DeleteItem = (id) => {
+  return new Promise((resolve, reject) => {
+    runQuery(`DELETE FROM items WHERE _id=${id}`, (err, results, fields) => {
+      if (err) {
+        console.log(err)
+        return reject(new Error(err))
+      }
+      console.log(results[1])
+      return resolve(true)
+    })
+  })
+}
