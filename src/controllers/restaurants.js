@@ -1,5 +1,5 @@
-const { GetRestaurants, CreateRestaurant } = require('../models/restaurants')
-
+const { GetRestaurants, CreateRestaurant, UpdateRestaurant } = require('../models/restaurants')
+const { GetUser } = require('../models/users')
 module.exports.GetAllRestaurant = async (req, res, next) => {
   try {
     const dataRestaurants = await GetRestaurants(false, { p: 'ram' })
@@ -50,6 +50,45 @@ module.exports.CreateRestaurant = async (req, res, next) => {
     }
   } catch (e) {
     console.log(e)
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
+
+module.exports.UpdateRestaurant = async (req, res, next) => {
+  try {
+    if (!(Object.keys(req.body).length > 0)) {
+      throw new Error('Please Defined What you want to update')
+    }
+    const { id } = req.params
+    const dataRestaurant = await GetRestaurants(id)
+    const dataOwner = await GetUser(req.auth.id)
+    if (!dataRestaurant) {
+      throw new Error('Restaurants Not Exists')
+    }
+    if (!(dataOwner._id === dataRestaurant.id_owner || dataOwner.is_superadmin)) {
+      res.status(403).send({
+        success: false,
+        msg: 'To Update You Must Superadmin Or Owner of this Restaurant'
+      })
+    }
+    const params = Object.keys(req.body).map((v) => {
+      if (v && ['name', 'logo', 'location', 'decription'].includes(v) && req.body[v]) {
+        return { key: v, value: req.body[v] }
+      } else {
+        return null
+      }
+    }).filter(v => v)
+    const update = await UpdateRestaurant(id, params)
+    if (update) {
+      res.status(201).send({
+        success: true,
+        msg: `Success Update ${dataRestaurant.name} Restaurant`
+      })
+    }
+  } catch (e) {
     res.status(202).send({
       success: false,
       msg: e.message

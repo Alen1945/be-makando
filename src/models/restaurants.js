@@ -47,3 +47,15 @@ exports.CreateRestaurant = (data) => {
     })
   })
 }
+exports.UpdateRestaurant = (id, params) => {
+  return new Promise((resolve, reject) => {
+    runQuery(`UPDATE restaurants SET ${params.map(v => `${v.key} = '${v.value}'`).join(',')} WHERE _id = ${id}`, (err, results, fields) => {
+      if (err) {
+        console.log(err)
+        reject(new Error(err))
+      }
+      console.log(results[1])
+      resolve(true)
+    })
+  })
+}
