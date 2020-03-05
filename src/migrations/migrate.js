@@ -4,10 +4,12 @@
 module.exports = {
   table: [
     ...require('./users').queryTable,
-    ...require('./restaurants').queryTable
+    ...require('./restaurants').queryTable,
+    ...require('./items').queryTable
   ],
   foreign: [
     ...require('./users').queryForeign,
-    ...require('./restaurants').queryForeign
+    ...require('./restaurants').queryForeign,
+    ...require('./items').queryForeign
   ]
 }

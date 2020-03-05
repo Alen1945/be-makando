@@ -15,13 +15,14 @@ db.query(`
   if (err) {
     console.log(err)
   } else {
+    console.log('>>>>> Running Migrate ======>>>')
     db.query(`
     use ${dbName};
     ${foreign.map(v => `${v}`).join(';')}`, (err, results, field) => {
       if (err) {
         console.log(err)
       } else {
-        console.log('Migrate Succes')
+        console.log('>>>>> Migrate Succes')
       }
     })
     db.end()
