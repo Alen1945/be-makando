@@ -24,9 +24,11 @@ const itemF = `
   DROP CONSTRAINT IF EXISTS FK_Category;
   ALTER TABLE items
   ADD CONSTRAINT FK_Restaurant
-    FOREIGN KEY (id_restaurant) REFERENCES restaurants(_id),
+    FOREIGN KEY (id_restaurant) REFERENCES restaurants(_id)
+    ON DELETE NO ACTION,
   ADD CONSTRAINT FK_Category
     FOREIGN KEY (id_category) REFERENCES itemCategories(_id)
+    ON DELETE NO ACTION
 `
 exports.queryTable = [
   categoryT,
