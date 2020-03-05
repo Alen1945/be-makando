@@ -1,4 +1,4 @@
-const { GetRestaurants, CreateRestaurant, UpdateRestaurant } = require('../models/restaurants')
+const { GetRestaurants, CreateRestaurant, UpdateRestaurant, DeletRestaurant } = require('../models/restaurants')
 const { GetUser } = require('../models/users')
 module.exports.GetAllRestaurant = async (req, res, next) => {
   try {
@@ -85,13 +85,32 @@ module.exports.UpdateRestaurant = async (req, res, next) => {
     if (update) {
       res.status(201).send({
         success: true,
-        msg: `Success Update ${dataRestaurant.name} Restaurant`
+        msg: `Success Update Restaurant With id ${id}`
       })
     }
   } catch (e) {
     res.status(202).send({
       success: false,
       msg: e.message
+    })
+  }
+}
+
+module.exports.DeletRestaurant = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    if (!(await DeletRestaurant(id))) {
+      throw new Error(`Failed To Delete Restaurant With id ${id}`)
+    }
+    res.status(200).send({
+      success: true,
+      msg: `Success to Delete Restaurants With id ${id}`
+    })
+  } catch (e) {
+    console.log(e)
+    res.status(202).send({
+      success: false,
+      msg: e.msg
     })
   }
 }

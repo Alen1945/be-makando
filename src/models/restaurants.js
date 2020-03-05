@@ -47,6 +47,7 @@ exports.CreateRestaurant = (data) => {
     })
   })
 }
+
 exports.UpdateRestaurant = (id, params) => {
   return new Promise((resolve, reject) => {
     runQuery(`UPDATE restaurants SET ${params.map(v => `${v.key} = '${v.value}'`).join(',')} WHERE _id = ${id}`, (err, results, fields) => {
@@ -55,6 +56,18 @@ exports.UpdateRestaurant = (id, params) => {
         reject(new Error(err))
       }
       console.log(results[1])
+      resolve(true)
+    })
+  })
+}
+
+exports.DeletRestaurant = (id) => {
+  return new Promise((resolve, reject) => {
+    runQuery(`DELETE FROM users WHERE _id=${id}`, (err, results, fields) => {
+      if (err) {
+        console.log(err)
+        reject(new Error(err))
+      }
       resolve(true)
     })
   })
