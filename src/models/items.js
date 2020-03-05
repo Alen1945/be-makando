@@ -32,3 +32,16 @@ exports.CreateItem = (data) => {
     })
   })
 }
+
+exports.UpdateItem = (id, params) => {
+  return new Promise((resolve, reject) => {
+    runQuery(`UPDATE items SET ${params.map(v => `${v.key} = '${v.value}'`).join(',')} WHERE _id = ${id}`, (err, results, fields) => {
+      if (err) {
+        console.log(err)
+        return reject(new Error(err))
+      }
+      console.log(results[1])
+      return resolve(true)
+    })
+  })
+}
