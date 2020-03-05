@@ -3,10 +3,18 @@ const { GetCategory, CreateCategory, UpdateCategory, DeleteCategory } = require(
 exports.GetAllCategory = async (req, res, next) => {
   try {
     const dataCategory = await GetCategory(false, { p: 'ram' })
-    res.status(200).send({
-      success: true,
-      data: dataCategory
-    })
+    if (dataCategory) {
+      res.status(200).send({
+        success: true,
+        data: dataCategory
+      })
+    } else {
+      res.status(200).send({
+        success: true,
+        data: false,
+        msg: 'Data is Empty'
+      })
+    } 
   } catch (e) {
     console.log(e)
     res.status(202).send({
@@ -19,10 +27,18 @@ exports.GetAllCategory = async (req, res, next) => {
 exports.GetDetailCategory = async (req, res, next) => {
   try {
     const dataCategory = await GetCategory(req.params.id)
-    res.status(200).send({
-      success: true,
-      data: dataCategory
-    })
+    if (dataCategory) {
+      res.status(200).send({
+        success: true,
+        data: dataCategory
+      })
+    } else {
+      res.status(200).send({
+        success: true,
+        data: false,
+        msg: `Category With id ${req.params.id} Not Exists`
+      })
+    }
   } catch (e) {
     console.log(e)
     res.status(202).send({
