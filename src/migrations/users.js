@@ -1,15 +1,16 @@
-const users = `
+const usersT = `
   CREATE TABLE IF NOT EXISTS users(
   _id int(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   username VARCHAR(40) NOT NULL,
   password VARCHAR(100) NOT NULL,
+  code_verify VARCHAR(40) DEFAULT NULL,
   is_admin  TINYINT(1) DEFAULT 0,
   is_superadmin   TINYINT(1) DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
 )
 `
-const userProfile = `
+const userProfileT = `
   CREATE TABLE IF NOT EXISTS userProfile(
     _id INT(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     id_user INT(11) UNSIGNED NOT NULL,
@@ -22,7 +23,16 @@ const userProfile = `
     updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
   )
 `
-module.exports = [
-  users,
-  userProfile
+const userProfileF = `
+  ALTER TABLE userProfile
+  ADD CONSTRAINT FK_User
+    FOREIGN KEY (id_user) REFERENCES users(_id)
+    ON DELETE CASCADE
+`
+exports.queryTable = [
+  usersT,
+  userProfileT
+]
+exports.queryForeign = [
+  userProfileF
 ]

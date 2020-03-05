@@ -1,4 +1,4 @@
-const restaurants = `
+const restaurantsT = `
   CREATE TABLE IF NOT EXISTS restaurants(
   _id int(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   id_owner INT(11) UNSIGNED NOT NULL,
@@ -6,11 +6,19 @@ const restaurants = `
   logo TEXT,
   addres TEXT,
   description TEXT,
-  created_by INT(11) UNSIGNED,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   upated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
 )
 `
-module.exports = [
-  restaurants
+const restaurantsF = `
+  ALTER TABLE restaurants
+  ADD CONSTRAINT FK_Owner
+    FOREIGN KEY (id_owner) REFERENCES users(_id)
+    ON DELETE CASCADE
+`
+exports.queryTable = [
+  restaurantsT
+]
+exports.queryForeign = [
+  restaurantsF
 ]

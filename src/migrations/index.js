@@ -2,7 +2,7 @@ const { db } = require('../config/db')
 require('dotenv').config()
 
 /* Get ARRAY OF QUERY TABLES */
-const tomigrate = require('./migrate.js')
+const { table, foreign } = require('./migrate.js')
 
 /* Get DB_NAME in .env */
 const dbName = process.env.DB_NAME
@@ -11,13 +11,19 @@ const dbName = process.env.DB_NAME
 db.query(`
  CREATE DATABASE IF NOT EXISTS ${dbName};
  use ${dbName};
-${tomigrate.map(v => `${v}`).join(';')}
-`, (err, results, field) => {
+ ${table.map(v => `${v}`).join(';')}`, (err, results, field) => {
   if (err) {
     console.log(err)
   } else {
-    console.log('Migrate Succes')
+    db.query(`
+    use ${dbName};
+    ${foreign.map(v => `${v}`).join(';')}`, (err, results, field) => {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log('Migrate Succes')
+      }
+    })
+    db.end()
   }
 })
-
-db.end()
