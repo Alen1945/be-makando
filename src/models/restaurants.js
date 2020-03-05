@@ -63,7 +63,7 @@ exports.UpdateRestaurant = (id, params) => {
 
 exports.DeletRestaurant = (id) => {
   return new Promise((resolve, reject) => {
-    runQuery(`DELETE FROM users WHERE _id=${id}`, (err, results, fields) => {
+    runQuery(`DELETE FROM restaurants WHERE _id=${id}`, (err, results, fields) => {
       if (err) {
         console.log(err)
         reject(new Error(err))
