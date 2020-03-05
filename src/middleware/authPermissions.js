@@ -37,9 +37,9 @@ const checkPermission = (auth, role) => {
     if (auth) {
       runQuery(`SELECT is_${role}${role === 'admin' ? ',is_superadmin' : ''} FROM users WHERE username='${auth.username}'`,
         (err, results, fields) => {
-          if (err) {
+          if (err || !(results[1].length > 0)) {
             console.log(err)
-            reject(new Error(err))
+            reject(new Error(err  || 'Users Has Been Delete'))
           } else {
             resolve(results[1][0][`is_${role}`] || (role === 'admin' ? results[1][0].is_superadmin : 0))
           }
