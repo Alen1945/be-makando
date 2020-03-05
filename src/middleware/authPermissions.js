@@ -19,7 +19,6 @@ module.exports = {
   superadmin: async (req, res, next) => {
     try {
       if (await checkPermission(req.auth, 'superadmin')) {
-        console.log('next')
         next()
       } else {
         throw new Error("You Don't Have Permission Only SuperAdmin")
@@ -36,7 +35,7 @@ module.exports = {
 const checkPermission = (auth, role) => {
   return new Promise((resolve, reject) => {
     if (auth) {
-      runQuery(`SELECT is_${role},${role === 'admin' ? 'is_superadmin' : ''} FROM users WHERE username='${auth.username}'`,
+      runQuery(`SELECT is_${role}${role === 'admin' ? ',is_superadmin' : ''} FROM users WHERE username='${auth.username}'`,
         (err, results, fields) => {
           if (err) {
             console.log(err)
