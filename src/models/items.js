@@ -19,3 +19,16 @@ exports.GetItem = (id, params) => {
     }
   })
 }
+
+exports.CreateItem = (data) => {
+  return new Promise((resolve, reject) => {
+    runQuery(`INSERT INTO items(${data.columns.map(v => v).join(',')}) VALUES(${data.values.map(v => `'${v}'`).join(',')})
+    `, (err, results, fields) => {
+      if (err) {
+        return reject(new Error(err))
+      }
+      console.log(results[1])
+      return resolve(results[1].insertId)
+    })
+  })
+}
