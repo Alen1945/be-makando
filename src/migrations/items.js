@@ -9,9 +9,10 @@ const itemsT = `
   CREATE TABLE IF NOT EXISTS items(
   _id INT(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   id_restaurant INT(11) UNSIGNED NOT NULL ,
-  id_category INT(11) UNSIGNED NOT NULL,
+  id_category INT(11) UNSIGNED DEFAULT 0,
   name VARCHAR(60) NOT NULL,
   price DECIMAL(10,2) UNSIGNED NOT NULL,
+  quantity INT(11) UNSIGNED DEFAULT 0,
   description TEXT,
   images TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -25,10 +26,10 @@ const itemF = `
   ALTER TABLE items
   ADD CONSTRAINT FK_Restaurant
     FOREIGN KEY (id_restaurant) REFERENCES restaurants(_id)
-    ON DELETE NO ACTION,
+    ON DELETE CASCADE,
   ADD CONSTRAINT FK_Category
     FOREIGN KEY (id_category) REFERENCES itemCategories(_id)
-    ON DELETE NO ACTION
+    ON DELETE SET NULL
 `
 exports.queryTable = [
   categoryT,
