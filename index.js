@@ -3,7 +3,7 @@ const bodyParser = require('body-parser')
 const app = express()
 
 /* Import Controllers */
-const { TopUp, Verify } = require('./src/controllers/users')
+const { TopUp, Verify, ForgotPassword } = require('./src/controllers/users')
 /* Import ROUTES */
 const Users = require('./src/routes/users')
 const Restaurants = require('./src/routes/restaurants')
@@ -21,6 +21,7 @@ const checkAuthToken = require('./src/middleware/authMiddleware')
 /* Set ROUTES */
 app.post('/topup', checkAuthToken, TopUp)
 app.post('/verify', Verify)
+app.post('/forgot-password', ForgotPassword)
 app.use('/users', Users)
 app.use('/restaurants', Restaurants)
 app.use('/categories', itemCategories)

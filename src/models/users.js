@@ -84,11 +84,64 @@ exports.VerifyUser = (code) => {
         } else {
           return reject(new Error(err))
         }
-      }
-    )
+      })
   })
 }
 
+exports.GetCodeVerify = (username) => {
+  return new Promise((resolve, reject) => {
+    runQuery(`SELECT _id,username FROM users WHERE username = '${username}'`,
+      (err, results, fields) => {
+        if (err) {
+          return reject(new Error(err))
+        }
+        if (results[1].length > 0 && results[1][0]) {
+          const codeVerify = uuid()
+          const idUser = results[1][0]._id
+          runQuery(`UPDATE userProfile SET code_verify = '${codeVerify}' WHERE id_user=${idUser}`,
+            (err, results, fields) => {
+              if (err) {
+                return reject(new Error(err))
+              }
+              if (results[1].affectedRows) {
+                return resolve({ status: true, codeVerify })
+              } else {
+                return reject(new Error('Failed to Get Code Verify'))
+              }
+            })
+        } else {
+          return reject(new Error('Username Not Exists'))
+        }
+      })
+  })
+}
+
+exports.ChangePassword = (code, password) => {
+  return new Promise((resolve, reject) => {
+    runQuery(`SELECT id_user from userProfile WHERE code_verify= '${code}'`,
+      (err, results, fields) => {
+        if (!err) {
+          if (results[1][0] && results[1][0].id_user) {
+            const idUser = results[1][0].id_user
+            runQuery(`
+              UPDATE users SET password='${password}' WHERE _id = ${idUser};
+              UPDATE userProfile SET code_verify = ${null} WHERE id_user =${idUser}
+            `, (err, results, fields) => {
+              if (err) {
+                reject(new Error(err))
+              } else {
+                resolve(true)
+              }
+            })
+          } else {
+            return reject(new Error('Code Verification Wrong'))
+          }
+        } else {
+          return reject(new Error(err))
+        }
+      })
+  })
+}
 exports.UpdateProfile = (id, params) => {
   return new Promise((resolve, reject) => {
     let query = []

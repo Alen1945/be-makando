@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { runQuery } = require('../config/db')
-const { GetUser, CreateUser, VerifyUser, UpdateProfile, GetProfile, DeleteUser } = require('../models/users')
+const { GetUser, CreateUser, VerifyUser, GetCodeVerify, ChangePassword, UpdateProfile, GetProfile, DeleteUser } = require('../models/users')
 const { validateUsernamePassword } = require('../utility/validate')
 require('dotenv').config()
 exports.GetProfile = async (req, res, next) => {
@@ -207,6 +207,49 @@ exports.Verify = async (req, res, next) => {
       })
     } else {
       throw new Error('Failed to Verify Your Account')
+    }
+  } catch (e) {
+    console.log(e)
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
+
+exports.ForgotPassword = async (req, res, next) => {
+  try {
+    if (!req.query.code) {
+      if (!req.body.username) {
+        throw new Error('Please Defined Username to Create New Password')
+      }
+      const code = await GetCodeVerify(req.body.username)
+      if (code.status) {
+        res.status(200).send({
+          status: false,
+          code_verify: code.codeVerify,
+          msg: 'Register Success, Please Verify Your Account',
+          url_to_verify: `${process.env.APP_URL}/forgot-password?code=${code.codeVerify}`
+        })
+      } else {
+        throw new Error('Failed to Verify Your Account')
+      }
+    } else {
+      if (!req.body.new_password || !req.body.confirm_password) {
+        throw new Error('Please Defined new_password and confirm_password to update password')
+      }
+      if (req.body.new_password !== req.body.confirm_password) {
+        throw new Error('Confirm Password not Match')
+      }
+      const changePassword = await ChangePassword(req.query.code, bcrypt.hashSync(req.body.new_password))
+      if (changePassword) {
+        return res.status(200).send({
+          success: true,
+          msg: 'Success Change Password'
+        })
+      } else {
+        throw new Error('Failed To Change Password')
+      }
     }
   } catch (e) {
     console.log(e)
