@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { runQuery } = require('../config/db')
-const { GetUser, RegisterUser, UpdateProfile, GetProfile, DeleteUser } = require('../models/users')
+const { GetUser, CreateUser, UpdateProfile, GetProfile, DeleteUser } = require('../models/users')
 const { validateUsernamePassword } = require('../utility/validate')
 
 exports.GetProfile = async (req, res, next) => {
@@ -28,7 +28,7 @@ exports.RegisterUser = async (req, res, next) => {
       const validate = validateUsernamePassword(username, password)
       if (validate.val) {
         const hashPassword = bcrypt.hashSync(password)
-        const statusRegister = await RegisterUser({ username, password: hashPassword })
+        const statusRegister = await CreateUser({ username, password: hashPassword }, false)
         if (statusRegister) {
           res.status(201).send({
             success: true,

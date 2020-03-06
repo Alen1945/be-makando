@@ -28,7 +28,7 @@ exports.GetProfile = (id) => {
   })
 }
 
-exports.RegisterUser = (data) => {
+exports.CreateUser = (data, isAdmin) => {
   return new Promise((resolve, reject) => {
     const { username, password } = data
     runQuery(`SELECT COUNT(*) AS total FROM users WHERE username = '${username}'`,
@@ -38,7 +38,7 @@ exports.RegisterUser = (data) => {
         }
         const { total } = results[1][0]
         if (!total) {
-          runQuery(`INSERT INTO users(username,password) VALUES('${username}','${password}')`,
+          runQuery(`INSERT INTO users(username, password${isAdmin ? ',is_admin' : ''})VALUES('${username}','${password}'${isAdmin ? ',1' : ''})`,
             (err, results, fields) => {
               if (err) {
                 console.log(results[1].solutions)
