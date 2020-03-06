@@ -19,6 +19,17 @@ const itemsT = `
   updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
 )
 `
+const itemReviewsT = `
+  CREATE TABLE IF NOT EXISTS itemReviews(
+    _id INT(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    id_user INT(11) UNSIGNED DEFAULT 0 ,
+    id_item INT(11) UNSIGNED DEFAULT 0,
+    rating ENUM('0S','1S','2S','3S','4S','5S') DEFAULT '0S',
+    review TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
+  )
+`
 const itemF = `
   ALTER TABLE items
   DROP CONSTRAINT IF EXISTS FK_Restaurant,
@@ -31,10 +42,24 @@ const itemF = `
     FOREIGN KEY (id_category) REFERENCES itemCategories(_id)
     ON DELETE SET NULL
 `
+const itemReviewsF = `
+  ALTER TABLE itemReviews
+  DROP CONSTRAINT IF EXISTS FK_User_Review,
+  DROP CONSTRAINT IF EXISTS FK_Item_Review;
+  ALTER TABLE itemReviews
+  ADD CONSTRAINT FK_User_Review
+    FOREIGN KEY (id_user) REFERENCES users(_id)
+    ON DELETE SET NULL,
+  ADD CONSTRAINT FK_Item_Review
+    FOREIGN KEY (id_item) REFERENCES items(_id)
+    ON DELETE SET NULL
+`
 exports.queryTable = [
   categoryT,
-  itemsT
+  itemsT,
+  itemReviewsT
 ]
 exports.queryForeign = [
-  itemF
+  itemF,
+  itemReviewsF
 ]
