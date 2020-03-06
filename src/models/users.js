@@ -16,7 +16,7 @@ exports.GetUser = (id) => {
 
 exports.GetProfile = (id) => {
   return new Promise((resolve, reject) => {
-    runQuery(`SELECT u._id,u.username,p.fullname, p.email,p.gender,p.address from userProfile p INNER JOIN users u ON p.id_user=${id}`,
+    runQuery(`SELECT u._id,u.username,p.fullname, p.email,p.balance,p.gender,p.address from userProfile p INNER JOIN users u ON p.id_user=u._id WHERE u._id=${id}`,
       (error, results, fields) => {
         if (error) {
           return reject(new Error(error))
@@ -63,20 +63,20 @@ exports.CreateUser = (data, isAdmin) => {
 exports.UpdateProfile = (id, params) => {
   return new Promise((resolve, reject) => {
     let query = []
-    const paramsUsers = params.slice().filter(v => ['username', 'password'].includes(v.keys))
-    const paramsProfile = params.slice().filter((v) => ['fullname', 'email', 'gender', 'address', 'picture'].includes(v.keys))
+    const paramsUsers = params.slice().filter(v => ['username', 'password', 'status'].includes(v.key))
+    const paramsProfile = params.slice().filter((v) => ['fullname', 'email', 'gender', 'balance', 'address', 'picture'].includes(v.keys))
     if (paramsUsers.length > 0) {
-      query.push(`UPDATE users SET ${paramsUsers.map(v => `${v.keys} = '${v.value}'`).join(' , ')} WHERE _id=${id}`)
+      query.push(`UPDATE users SET ${paramsUsers.map(v => `${v.key} = '${v.value}'`).join(' , ')} WHERE _id=${id}`)
     }
     if (paramsProfile.length > 0) {
-      query.push(`UPDATE userProfile SET ${paramsProfile.map(v => `${v.keys} = '${v.value}'`).join(' , ')} WHERE id_user=${id}`)
+      query.push(`UPDATE userProfile SET ${paramsProfile.map(v => `${v.key} = '${v.value}'`).join(' , ')} WHERE id_user=${id}`)
     }
     runQuery(`${query.map((v) => v).join(';')}`, (err, results, fields) => {
       if (err) {
         return reject(new Error(err))
       }
       console.log(results)
-      return resolve(true)
+      return resolve(results.affectedRows)
     })
   })
 }
@@ -87,7 +87,7 @@ exports.DeleteUser = (id) => {
       if (err) {
         return reject(new Error(err))
       }
-      return resolve(true)
+      return resolve(results[1].affectedRows)
     })
   })
 }

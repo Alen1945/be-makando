@@ -8,12 +8,13 @@ exports.GetProfile = async (req, res, next) => {
   try {
     const profileUser = await GetProfile(req.auth.id)
     if (profileUser) {
-      res.status(200).send({
+      return res.status(200).send({
         success: true,
         data: profileUser
       })
+    } else {
+      throw new Error('Your Account Has been deleted')
     }
-    throw new Error('Your Account Has been deleted')
   } catch (e) {
     res.status(202).send({
       success: false,
@@ -91,7 +92,7 @@ exports.UpdateUser = async (req, res, next) => {
     const fillable = ['username', 'fullname', 'email', 'gender', 'address', 'picture']
     const params = Object.keys(req.body).map((v) => {
       if (v && fillable.includes(v) && req.body[v]) {
-        return { keys: v, value: req.body[v] }
+        return { key: v, value: req.body[v] }
       } else {
         return null
       }
@@ -109,7 +110,7 @@ exports.UpdateUser = async (req, res, next) => {
       if (!(bcrypt.compareSync(req.body.old_password, oldPassword))) {
         throw new Error('Old Password Not Match')
       }
-      params.push({ keys: 'password', value: bcrypt.hashSync(req.body.new_password) })
+      params.push({ key: 'password', value: bcrypt.hashSync(req.body.new_password) })
     }
     const update = await UpdateProfile(id, params)
     if (update) {
@@ -157,6 +158,30 @@ exports.DeleteUser = async (req, res, next) => {
       msg: 'Success to Delete User'
     })
   } catch (e) {
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
+
+exports.TopUp = async (req, res, next) => {
+  try {
+    if (!req.body.nominal_topup) {
+      throw new Error('Please Entry nominal_topup')
+    }
+    const idUser = req.auth.id
+    const updateBalance = await UpdateProfile(idUser, [{ key: 'balance', value: req.body.nominal_topup }])
+    if (updateBalance) {
+      res.send({
+        success: true,
+        msg: `Success TopUp for ${req.auth.username}`
+      })
+    } else {
+      throw new Error('Failed to TopUp!')
+    }
+  } catch (e) {
+    console.log(e)
     res.status(202).send({
       success: false,
       msg: e.message
