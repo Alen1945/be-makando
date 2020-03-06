@@ -4,7 +4,7 @@ exports.GetAllCart = async (req, res, next) => {
   try {
     const { id } = req.auth
     const carts = await GetCart(id)
-    if (carts.length > 0) {
+    if (carts.itemInCart.length > 0) {
       return res.status(200).send({
         succces: true,
         data: carts
