@@ -13,7 +13,7 @@ exports.GetProfile = async (req, res, next) => {
         data: profileUser
       })
     }
-    throw new Error('Something Wrong')
+    throw new Error('Your Account Has been deleted')
   } catch (e) {
     res.status(202).send({
       success: false,
@@ -86,16 +86,21 @@ exports.LoginUser = async (req, res, next) => {
 }
 
 exports.UpdateUser = async (req, res, next) => {
-  const { id } = req.auth
-  const fillable = ['username', 'fullname', 'email', 'gender', 'address', 'picture']
-  const params = Object.keys(req.body).map((v) => {
-    if (v && fillable.includes(v) && req.body[v]) {
-      return { keys: v, value: req.body[v] }
-    } else {
-      return null
-    }
-  }).filter(o => o)
   try {
+    const { id } = req.auth
+    const user = await GetUser(id)
+    if (!user) {
+      throw new Error('Your Account has been deleted')
+    }
+    const fillable = ['username', 'fullname', 'email', 'gender', 'address', 'picture']
+    const params = Object.keys(req.body).map((v) => {
+      if (v && fillable.includes(v) && req.body[v]) {
+        return { keys: v, value: req.body[v] }
+      } else {
+        return null
+      }
+    }).filter(o => o)
+
     if (req.body.old_password) {
       const user = await GetUser(id)
       const oldPassword = user.password
@@ -129,8 +134,12 @@ exports.UpdateUser = async (req, res, next) => {
 }
 
 exports.DeleteAccount = async (req, res, next) => {
-  const { id } = req.auth
   try {
+    const { id } = req.auth
+    const user = await GetUser(id)
+    if (!user) {
+      throw new Error('Your Account Has been deleted')
+    }
     if (!(await DeleteUser(id))) {
       throw new Error('Failed to Delete Your Account')
     }
