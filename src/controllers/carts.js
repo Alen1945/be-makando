@@ -37,6 +37,7 @@ exports.AddItem = async (req, res, next) => {
     }
     const dataItem = {
       idItem: item._id,
+      nameItem: item.name,
       totalItem: req.body.total_items,
       totalPrice: parseFloat(req.body.total_items) * parseFloat(item.price)
     }

@@ -4,6 +4,7 @@ const cartsT = `
   _id INT(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   id_user INT(11) UNSIGNED NOT NULL,
   id_item INT(11) UNSIGNED NOT NULL,
+  name_item VARCHAR(60) NOT NULL,
   total_items INT(11) UNSIGNED DEFAULT 0,
   total_price DECIMAL(10,2) UNSIGNED NOT NULL,
   is_check_out TINYINT(1) DEFAULT 0,
