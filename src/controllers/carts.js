@@ -1,9 +1,9 @@
-const { GetUserCart, GetDetailItemCart, UpdateItemCart , AddItem } = require('../models/carts')
+const { GetUserCart, UpdateItemCart, AddItem, RemoveItemCart } = require('../models/carts')
 const { GetItem } = require('../models/items')
 exports.GetAllCart = async (req, res, next) => {
   try {
-    const { id } = req.auth
-    const carts = await GetUserCart(id)
+    const idUser = req.auth.id
+    const carts = await GetUserCart(false, idUser)
     if (carts.itemInCart.length > 0) {
       return res.status(200).send({
         succces: true,
@@ -60,39 +60,55 @@ exports.AddItem = async (req, res, next) => {
 
 exports.UpdateItemCart = async (req, res, next) => {
   try {
-    if(!req.body.total_items) {
+    if (!req.body.total_items) {
       throw new Error('total_items is required')
     }
     const idUser = req.auth.id
     const idItemCart = req.params.id
-    const itemCart = await GetDetailItemCart(idItemCart)
+    const itemCart = await GetUserCart(idItemCart, idUser)
     if (!itemCart) {
       throw new Error(`Cart With id ${idItemCart} Is Not Exists`)
     }
     const item = await GetItem(itemCart.id_item)
     if (!item) {
-      throw new Error('This Item Has been Removed From Restaurant')
+      throw new Error('This Item Not Exists AnyMore')
     }
-    if (parseInt(itemCart.id_user) !== parseInt(idUser)) {
-      return res.status(403).send({
-        success: false,
-        msg: "This Item Not In Your Cart's"
-      })
-    }
-    const updateItemCart = await UpdateItemCart(idItemCart, {
+    const updateItemCart = await UpdateItemCart(idItemCart, idUser, {
       totalItem: req.body.total_items,
-      totalPrice: parseFloat(req.body.total_items) * parseFloat(item.price) 
+      totalPrice: parseFloat(req.body.total_items) * parseFloat(item.price)
     })
     if (updateItemCart) {
       res.status(200).send({
         success: true,
-        msg: 'Total Items in Cart Has been Update'
+        msg: `Total Items with name "${itemCart.name_item}" in Your Cart Has been Update`
       })
+    } else {
+      throw new Error('Failed To Update!! Item Not In Cart')
     }
   } catch (e) {
     console.log(e)
     res.status(202).send({
       succces: false,
+      msg: e.message
+    })
+  }
+}
+
+exports.RemoveItemCart = async (req, res, next) => {
+  try {
+    const idUser = req.auth.id
+    const idItemCart = req.params.id
+    if (!(await RemoveItemCart(idItemCart, idUser))) {
+      throw new Error('Failed To Remove!! Item Not In Cart')
+    }
+    res.status(200).send({
+      success: true,
+      msg: "Success to Remove Item From Cart's"
+    })
+  } catch (e) {
+    console.log(e)
+    res.status(202).send({
+      success: false,
       msg: e.message
     })
   }
