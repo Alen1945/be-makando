@@ -1,9 +1,9 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { runQuery } = require('../config/db')
-const { GetUser, CreateUser, UpdateProfile, GetProfile, DeleteUser } = require('../models/users')
+const { GetUser, CreateUser, VerifyUser, UpdateProfile, GetProfile, DeleteUser } = require('../models/users')
 const { validateUsernamePassword } = require('../utility/validate')
-
+require('dotenv').config()
 exports.GetProfile = async (req, res, next) => {
   try {
     const profileUser = await GetProfile(req.auth.id)
@@ -30,10 +30,12 @@ exports.RegisterUser = async (req, res, next) => {
       if (validate.val) {
         const hashPassword = bcrypt.hashSync(password)
         const statusRegister = await CreateUser({ username, password: hashPassword }, false)
-        if (statusRegister) {
+        if (statusRegister && statusRegister.status) {
           res.status(201).send({
             success: true,
-            msg: 'Register Success, Please Login'
+            code_verify: statusRegister.codeVerify,
+            msg: 'Register Success, Please Verify Your Account',
+            url_to_verify: `${process.env.APP_URL}/verify?code=${statusRegister.codeVerify}`
           })
         }
       } else {
@@ -56,9 +58,12 @@ exports.LoginUser = async (req, res, next) => {
     const { username, password } = req.body
     if (username && password) {
       const dataLogin = await new Promise((resolve, reject) => {
-        runQuery(`SELECT _id,username,password FROM users WHERE username='${username}'`,
+        runQuery(`SELECT _id,username,password,status FROM users WHERE username='${username}'`,
           (err, results) => {
             if (!err && results[1].length > 0 && bcrypt.compareSync(password, results[1][0].password)) {
+              if (!(results[1][0].status)) {
+                return reject(new Error('Please Verify Your Account'))
+              }
               const userData = { id: results[1][0]._id, username }
               return resolve(userData)
             } else {
@@ -170,8 +175,8 @@ exports.TopUp = async (req, res, next) => {
     if (!req.body.nominal_topup) {
       throw new Error('Please Entry nominal_topup')
     }
-    const idUser = req.auth.id
-    const updateBalance = await UpdateProfile(idUser, [{ key: 'balance', value: req.body.nominal_topup }])
+    const dataUser = await GetProfile(req.auth.id)
+    const updateBalance = await UpdateProfile(req.auth.id, [{ key: 'balance', value: parseFloat(dataUser.balance) + parseFloat(req.body.nominal_topup) }])
     if (updateBalance) {
       res.send({
         success: true,
@@ -179,6 +184,29 @@ exports.TopUp = async (req, res, next) => {
       })
     } else {
       throw new Error('Failed to TopUp!')
+    }
+  } catch (e) {
+    console.log(e)
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
+
+exports.Verify = async (req, res, next) => {
+  try {
+    if (!req.query.code) {
+      throw new Error('Required Query code')
+    }
+    const verify = await VerifyUser(req.query.code)
+    if (verify) {
+      res.status(200).send({
+        success: true,
+        msg: 'Your Account Is Verify Please Login'
+      })
+    } else {
+      throw new Error('Failed to Verify Your Account')
     }
   } catch (e) {
     console.log(e)

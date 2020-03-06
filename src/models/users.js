@@ -1,5 +1,5 @@
 const { runQuery } = require('../config/db')
-
+const uuid = require('uuid').v1
 exports.GetUser = (id) => {
   return new Promise((resolve, reject) => {
     runQuery(`SELECT * from users WHERE _id=${id}`,
@@ -44,10 +44,11 @@ exports.CreateUser = (data, isAdmin) => {
                 console.log(results[1].solutions)
                 return reject(new Error(err))
               } else {
-                runQuery(`INSERT INTO userProfile(id_user) VALUES(${results[1].insertId})`,
+                const codeVerify = uuid()
+                runQuery(`INSERT INTO userProfile(id_user, code_verify ) VALUES(${results[1].insertId},'${codeVerify}')`,
                   (err, results, fields) => {
                     if (!err) {
-                      return resolve(true)
+                      return resolve({ status: true, codeVerify })
                     }
                     console.log(err)
                   })
@@ -60,11 +61,39 @@ exports.CreateUser = (data, isAdmin) => {
   })
 }
 
+exports.VerifyUser = (code) => {
+  return new Promise((resolve, reject) => {
+    runQuery(`SELECT id_user from userProfile WHERE code_verify= '${code}'`,
+      (err, results, fields) => {
+        if (!err) {
+          if (results[1][0] && results[1][0].id_user) {
+            const idUser = results[1][0].id_user
+            runQuery(`
+              UPDATE users SET status=1 WHERE _id = ${idUser};
+              UPDATE userProfile SET code_verify = ${null} WHERE id_user =${idUser}
+            `, (err, results, fields) => {
+              if (err) {
+                reject(new Error(err))
+              } else {
+                resolve(true)
+              }
+            })
+          } else {
+            return reject(new Error('Code Verification Wrong'))
+          }
+        } else {
+          return reject(new Error(err))
+        }
+      }
+    )
+  })
+}
+
 exports.UpdateProfile = (id, params) => {
   return new Promise((resolve, reject) => {
     let query = []
     const paramsUsers = params.slice().filter(v => ['username', 'password', 'status'].includes(v.key))
-    const paramsProfile = params.slice().filter((v) => ['fullname', 'email', 'gender', 'balance', 'address', 'picture'].includes(v.keys))
+    const paramsProfile = params.slice().filter((v) => ['fullname', 'email', 'gender', 'balance', 'address', 'picture'].includes(v.key))
     if (paramsUsers.length > 0) {
       query.push(`UPDATE users SET ${paramsUsers.map(v => `${v.key} = '${v.value}'`).join(' , ')} WHERE _id=${id}`)
     }
@@ -76,7 +105,7 @@ exports.UpdateProfile = (id, params) => {
         return reject(new Error(err))
       }
       console.log(results)
-      return resolve(results.affectedRows)
+      return resolve(results[1].affectedRows)
     })
   })
 }
