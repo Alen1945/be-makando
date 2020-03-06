@@ -38,7 +38,7 @@ const checkPermission = (auth, role) => {
         (err, results, fields) => {
           if (err || !(results[1].length > 0)) {
             console.log(err)
-            reject(new Error(err || 'Users Has Been Delete'))
+            reject(new Error(err || 'Your Account Has Been Deleted'))
           } else {
             resolve(results[1][0][`is_${role}`] || (role === 'admin' ? results[1][0].is_superadmin : 0))
           }

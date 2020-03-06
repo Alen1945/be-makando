@@ -88,10 +88,6 @@ exports.LoginUser = async (req, res, next) => {
 exports.UpdateUser = async (req, res, next) => {
   try {
     const { id } = req.auth
-    const user = await GetUser(id)
-    if (!user) {
-      throw new Error('Your Account has been deleted')
-    }
     const fillable = ['username', 'fullname', 'email', 'gender', 'address', 'picture']
     const params = Object.keys(req.body).map((v) => {
       if (v && fillable.includes(v) && req.body[v]) {
@@ -136,10 +132,6 @@ exports.UpdateUser = async (req, res, next) => {
 exports.DeleteAccount = async (req, res, next) => {
   try {
     const { id } = req.auth
-    const user = await GetUser(id)
-    if (!user) {
-      throw new Error('Your Account Has been deleted')
-    }
     if (!(await DeleteUser(id))) {
       throw new Error('Failed to Delete Your Account')
     }
@@ -155,8 +147,8 @@ exports.DeleteAccount = async (req, res, next) => {
   }
 }
 exports.DeleteUser = async (req, res, next) => {
-  const { id } = req.params.id
   try {
+    const { id } = req.params.id
     if (!(await DeleteUser(id))) {
       throw new Error('Failed to Delete User')
     }
