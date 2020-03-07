@@ -1,5 +1,5 @@
 const qs = require('qs')
-const { GetReview, CreateReview } = require('../models/reviews')
+const { GetReview, CreateReview, UpdateReview } = require('../models/reviews')
 const { GetItem } = require('../models/items')
 
 exports.GetAllReview = async (req, res, next) => {
@@ -123,6 +123,39 @@ exports.CreateReview = async (req, res, next) => {
     }
   } catch (e) {
     console.log(e)
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
+
+exports.UpdateReview = async (req, res, next) => {
+  try {
+    if (!(Object.keys(req.body).length > 0)) {
+      throw new Error('Please Defined What you want to update')
+    }
+    const { id } = req.params
+    const dataReview = await GetReview(id, req.auth.id)
+    if (!(dataReview)) {
+      throw new Error(`Never Review Item With id ${id}`)
+    }
+    const fillAble = ['rating', 'review']
+    const params = fillAble.map((v) => {
+      if (v && req.body[v]) {
+        return { key: v, value: req.body[v] }
+      } else {
+        return null
+      }
+    }).filter(v => v)
+    const update = await UpdateReview(id, params)
+    if (update) {
+      res.status(201).send({
+        success: true,
+        msg: `Success Update Review With id ${id}`
+      })
+    }
+  } catch (e) {
     res.status(202).send({
       success: false,
       msg: e.message

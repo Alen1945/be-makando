@@ -3,8 +3,7 @@ const { runQuery } = require('../config/db')
 exports.GetReview = (id, idUser, params) => {
   return new Promise((resolve, reject) => {
     if (id) {
-      console.log(id)
-      runQuery(`SELECT * FROM itemReviews WHERE _id =${id} ${idUser ? `'AND id_user ='${idUser}` : ''}`, (err, results, fields) => {
+      runQuery(`SELECT * FROM itemReviews WHERE _id =${id} ${idUser ? `AND id_user =${parseInt(idUser)}` : ''}`, (err, results, fields) => {
         if (err) {
           return reject(new Error(err))
         }
@@ -53,6 +52,19 @@ exports.CreateReview = (idUser, params) => {
         console.log(results[1])
         return resolve(results[1].insertId)
       })
+    })
+  })
+}
+
+exports.UpdateReview = (id, params) => {
+  return new Promise((resolve, reject) => {
+    runQuery(`UPDATE itemReviews SET ${params.map(v => `${v.key} = '${v.value}'`).join(' , ')} WHERE _id=${id}`, (err, results, fields) => {
+      if (err) {
+        console.log(err)
+        return reject(new Error(err))
+      }
+      console.log(results[1])
+      return resolve(results[1].affectedRows)
     })
   })
 }
