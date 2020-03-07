@@ -68,3 +68,16 @@ exports.UpdateReview = (id, params) => {
     })
   })
 }
+
+exports.DeleteReview = (id) => {
+  return new Promise((resolve, reject) => {
+    runQuery(`DELETE FROM itemReviews WHERE _id=${id}`, (err, results, fields) => {
+      if (err) {
+        console.log(err)
+        return reject(new Error(err))
+      }
+      console.log(results[1])
+      return resolve(results[1].affectedRows)
+    })
+  })
+}

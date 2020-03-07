@@ -1,5 +1,5 @@
 const qs = require('qs')
-const { GetReview, CreateReview, UpdateReview } = require('../models/reviews')
+const { GetReview, CreateReview, UpdateReview, DeleteReview } = require('../models/reviews')
 const { GetItem } = require('../models/items')
 
 exports.GetAllReview = async (req, res, next) => {
@@ -156,6 +156,28 @@ exports.UpdateReview = async (req, res, next) => {
       })
     }
   } catch (e) {
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
+exports.DeleteReview = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const dataItem = await GetReview(id, req.auth.id)
+    if (!(dataItem)) {
+      throw new Error(`Never Review Item With id ${id}`)
+    }
+    if (!(await DeleteReview(id))) {
+      throw new Error(`Failed To Delete Review With id ${id}`)
+    }
+    return res.status(200).send({
+      success: true,
+      msg: `Success to Delete Review With id ${id}`
+    })
+  } catch (e) {
+    console.log(e)
     res.status(202).send({
       success: false,
       msg: e.message
