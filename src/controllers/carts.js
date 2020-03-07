@@ -37,6 +37,10 @@ exports.AddItem = async (req, res, next) => {
     if (!item) {
       throw new Error(`Items With Id ${req.body.id_item} Not Exists`)
     }
+    if (parseInt(item.quantity) < parseInt(req.body.total_items)) {
+      throw new Error(`Not enough items, there are only ${item.quantity} item${item.quantity > 1 ? 's' : ''}`)
+    }
+    console.log(item)
     const dataItem = {
       idItem: item._id,
       nameItem: item.name,
