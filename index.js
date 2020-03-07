@@ -14,6 +14,7 @@ const items = require('./src/routes/items')
 const carts = require('./src/routes/carts')
 const Reviews = require('./src/routes/reviews')
 const { GuestCategories, GuestItems, GuestRestaurants } = require('./src/routes/guests')
+
 /* Middleware */
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -21,6 +22,16 @@ app.use(bodyParser.json())
 /* Import Middleware */
 const checkAuthToken = require('./src/middleware/authMiddleware')
 
+/* CSRF settings */
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Requested-With, Accept, Authorization')
+  if (req.method === 'OPTIONS') {
+    res.header('Acces-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE')
+    return res.status(200).send({})
+  }
+  next()
+})
 /* Set ROUTES */
 app.post('/register', RegisterUser)
 app.get('/verify', Verify)
