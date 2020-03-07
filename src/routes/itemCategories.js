@@ -3,8 +3,8 @@ const { GetAllCategory, GetDetailCategory, CreateCategory, UpdateCategory, Delet
 const checkAuthToken = require('../middleware/authMiddleware')
 const permission = require('../middleware/authPermissions')
 
-itemCategories.get('/', GetAllCategory)
-itemCategories.get('/:id', GetDetailCategory)
+itemCategories.get('/', checkAuthToken, GetAllCategory)
+itemCategories.get('/:id', checkAuthToken, GetDetailCategory)
 itemCategories.post('/', checkAuthToken, permission.superadmin, CreateCategory)
 itemCategories.put('/:id', checkAuthToken, permission.superadmin, UpdateCategory)
 itemCategories.delete('/:id', checkAuthToken, permission.superadmin, DeleteCategory)
