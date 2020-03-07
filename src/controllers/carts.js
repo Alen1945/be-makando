@@ -1,11 +1,12 @@
-const { GetUserCart, UpdateItemCart, AddItem, RemoveItemCart } = require('../models/carts')
+const { GetUserCart, UpdateItemCart, AddItem, RemoveItemCart, CheckOutItem } = require('../models/carts')
 const { GetItem } = require('../models/items')
+const { GetProfile } = require('../models/users')
 exports.GetAllCart = async (req, res, next) => {
   try {
     const idUser = req.auth.id
-    const carts = await GetUserCart(false, idUser)
+    const carts = await GetUserCart(false, idUser, true)
     console.log(carts)
-    if (carts.itemInCart) {
+    if (carts) {
       return res.status(200).send({
         succces: true,
         data: carts
@@ -106,6 +107,35 @@ exports.RemoveItemCart = async (req, res, next) => {
       success: true,
       msg: "Success to Remove Items From Cart's"
     })
+  } catch (e) {
+    console.log(e)
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
+
+exports.CheckOutItem = async (req, res, next) => {
+  try {
+    const idUser = req.auth.id
+    const cart = await GetUserCart(false, idUser)
+    if (!(cart)) {
+      throw new Error('You Dont Have Item In Cart')
+    }
+    const dataUser = await GetProfile(idUser)
+    if (dataUser.balance < cart.totalPrice) {
+      throw new Error('You Dont Have Enough balance')
+    }
+    const checkout = CheckOutItem(idUser, parseFloat(cart.totalPrice))
+    if (checkout) {
+      res.status(200).send({
+        success: true,
+        msg: "Success to Checkout Items From Cart's"
+      })
+    } else {
+      throw new Error('Failet To Checkout Items In Cart')
+    }
   } catch (e) {
     console.log(e)
     res.status(202).send({

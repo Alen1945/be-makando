@@ -4,6 +4,7 @@ const app = express()
 
 /* Import Controllers */
 const { TopUp, Verify, ForgotPassword } = require('./src/controllers/users')
+const { CheckOutItem } = require('./src/controllers/carts')
 /* Import ROUTES */
 const Users = require('./src/routes/users')
 const Restaurants = require('./src/routes/restaurants')
@@ -23,6 +24,7 @@ const checkAuthToken = require('./src/middleware/authMiddleware')
 app.post('/topup', checkAuthToken, TopUp)
 app.post('/verify', Verify)
 app.post('/forgot-password', ForgotPassword)
+app.get('/checkout', checkAuthToken, CheckOutItem)
 app.use('/reviews', Reviews)
 app.use('/users', Users)
 app.use('/restaurants', Restaurants)

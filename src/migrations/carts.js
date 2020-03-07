@@ -15,7 +15,7 @@ const cartsT = `
 const transcationsT = `
   CREATE TABLE IF NOT EXISTS transcations(
     _id INT(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-    id_users INT(11) UNSIGNED NOT NULL,
+    id_user INT(11) UNSIGNED NOT NULL,
     list_item TEXT,
     total_price DECIMAL(10,2) UNSIGNED NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
