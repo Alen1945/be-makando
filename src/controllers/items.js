@@ -111,8 +111,8 @@ exports.CreateItem = async (req, res, next) => {
         msg: 'To add Item to this Restaurant You Must Owner of Restaurant Or Superadmin'
       })
     }
-    let columns = []
-    let values = []
+    const columns = []
+    const values = []
     const fillAble = ['id_restaurant', 'id_category', 'name', 'price', 'images', 'decription']
     Object.keys(req.body).forEach((v) => {
       if (v && fillAble.includes(v) && req.body[v]) {

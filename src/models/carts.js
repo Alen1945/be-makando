@@ -19,7 +19,7 @@ exports.GetUserCart = (idCart, idUser, includeItem) => {
         if (!(results[1].length > 0)) {
           return resolve(false)
         }
-        let dataCart = {
+        const dataCart = {
           totalPrice: results[2][0].totalPrice,
           totalTypeItems: results[1].length
         }
