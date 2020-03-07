@@ -117,14 +117,18 @@ exports.UpdateUser = async (req, res, next) => {
       }
       params.push({ key: 'password', value: bcrypt.hashSync(req.body.new_password) })
     }
-    const update = await UpdateProfile(id, params)
-    if (update) {
-      res.send({
-        success: true,
-        msg: `User ${req.auth.username} has been updated`
-      })
+    if (params.length > 0) {
+      const update = await UpdateProfile(id, params)
+      if (update) {
+        res.send({
+          success: true,
+          msg: `User ${req.auth.username} has been updated`
+        })
+      } else {
+        throw new Error('Failed to update user!')
+      }
     } else {
-      throw new Error('Failed to update user!')
+      throw new Error('Something Wrong with your sented data')
     }
   } catch (e) {
     console.log(e)

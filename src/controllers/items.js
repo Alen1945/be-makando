@@ -158,7 +158,7 @@ exports.UpdateItem = async (req, res, next) => {
         msg: 'To Update Item You Must Owner of Restaurant Or Superadmin'
       })
     }
-    const fillAble = ['id_category', 'name', 'price', 'images', 'decription']
+    const fillAble = ['id_category', 'name', 'quantity', 'price', 'images', 'decription']
     const params = Object.keys(req.body).map((v) => {
       if (v && fillAble.includes(v) && req.body[v]) {
         return { key: v, value: req.body[v] }
@@ -166,12 +166,18 @@ exports.UpdateItem = async (req, res, next) => {
         return null
       }
     }).filter(v => v)
-    const update = await UpdateItem(id, params)
-    if (update) {
-      res.status(201).send({
-        success: true,
-        msg: `Success Update Restaurant With id ${id}`
-      })
+    if (params.length > 0) {
+      const update = await UpdateItem(id, params)
+      if (update) {
+        res.status(201).send({
+          success: true,
+          msg: `Success Update Item With id ${id}`
+        })
+      } else {
+        throw new Error('Failed to update Item')
+      }
+    } else {
+      throw new Error('Something Wrong with your sented data')
     }
   } catch (e) {
     res.status(202).send({

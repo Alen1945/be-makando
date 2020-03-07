@@ -150,12 +150,18 @@ exports.UpdateReview = async (req, res, next) => {
         return null
       }
     }).filter(v => v)
-    const update = await UpdateReview(id, params)
-    if (update) {
-      res.status(201).send({
-        success: true,
-        msg: `Success Update Review With id ${id}`
-      })
+    if (params.length > 0) {
+      const update = await UpdateReview(id, params)
+      if (update) {
+        res.status(201).send({
+          success: true,
+          msg: `Success Update Review With id ${id}`
+        })
+      } else {
+        throw new Error('Failed to Update Review!')
+      }
+    } else {
+      throw new Error('Something Wrong with your sented data')
     }
   } catch (e) {
     res.status(202).send({

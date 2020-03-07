@@ -132,12 +132,18 @@ exports.UpdateRestaurant = async (req, res, next) => {
         return null
       }
     }).filter(v => v)
-    const update = await UpdateRestaurant(id, params)
-    if (update) {
-      res.status(201).send({
-        success: true,
-        msg: `Success Update Restaurant With id ${id}`
-      })
+    if (params.length > 0) {
+      const update = await UpdateRestaurant(id, params)
+      if (update) {
+        res.status(201).send({
+          success: true,
+          msg: `Success Update Restaurant With id ${id}`
+        })
+      } else {
+        throw new Error('Failed to update Restaurant')
+      }
+    } else {
+      throw new Error('Something Wrong with your sented data')
     }
   } catch (e) {
     res.status(202).send({
