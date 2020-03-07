@@ -21,7 +21,7 @@ exports.GetUserCart = (idCart, idUser) => {
         }
         return resolve({ totalPrice: results[2][0].totalPrice, totalItem: results[1].length, itemInCart: results[1] })
       })
-    }   
+    }
   })
 }
 

@@ -56,7 +56,7 @@ exports.UpdateItem = (id, params) => {
         return reject(new Error(err))
       }
       console.log(results[1])
-      return resolve(true)
+      return resolve(results[1].affectedRows)
     })
   })
 }
@@ -69,7 +69,7 @@ exports.DeleteItem = (id) => {
         return reject(new Error(err))
       }
       console.log(results[1])
-      return resolve(true)
+      return resolve(results[1].affectedRows)
     })
   })
 }

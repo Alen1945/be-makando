@@ -64,7 +64,7 @@ exports.UpdateCategory = (id, name) => {
           return reject(new Error(err))
         }
         console.log(results[1])
-        return resolve(true)
+        return resolve(results[1].affectedRows)
       })
     })
   })
@@ -77,7 +77,7 @@ exports.DeleteCategory = (id) => {
         console.log(err)
         return reject(new Error(err))
       }
-      return resolve(true)
+      return resolve(results[1].affectedRows)
     })
   })
 }

@@ -1,5 +1,5 @@
 const qs = require('qs')
-const { GetRestaurants, CreateRestaurant, UpdateRestaurant, DeletRestaurant } = require('../models/restaurants')
+const { GetRestaurants, CreateRestaurant, UpdateRestaurant, DeleteRestaurant } = require('../models/restaurants')
 const { GetUser } = require('../models/users')
 exports.GetAllRestaurant = async (req, res, next) => {
   try {
@@ -147,10 +147,10 @@ exports.UpdateRestaurant = async (req, res, next) => {
   }
 }
 
-exports.DeletRestaurant = async (req, res, next) => {
+exports.DeleteRestaurant = async (req, res, next) => {
   try {
     const { id } = req.params
-    if (!(await DeletRestaurant(id))) {
+    if (!(await DeleteRestaurant(id))) {
       throw new Error(`Failed To Delete Restaurant With id ${id}`)
     }
     res.status(200).send({

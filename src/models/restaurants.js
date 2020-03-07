@@ -76,7 +76,7 @@ exports.UpdateRestaurant = (id, params) => {
   })
 }
 
-exports.DeletRestaurant = (id) => {
+exports.DeleteRestaurant = (id) => {
   return new Promise((resolve, reject) => {
     runQuery(`DELETE FROM restaurants WHERE _id=${id}`, (err, results, fields) => {
       if (err) {
