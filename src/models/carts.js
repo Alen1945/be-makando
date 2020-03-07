@@ -2,7 +2,7 @@ const { runQuery } = require('../config/db')
 exports.GetUserCart = (idCart, idUser) => {
   return new Promise((resolve, reject) => {
     if (idCart) {
-      runQuery(`SELECT * FROM carts WHERE _id=${idCart} && id_user=${idUser} && is_check_out=0`, (err, results, fields) => {
+      runQuery(`SELECT * FROM carts WHERE _id=${idCart} AND id_user=${idUser} AND is_check_out=0`, (err, results, fields) => {
         if (err) {
           return reject(new Error(err))
         }
@@ -10,8 +10,8 @@ exports.GetUserCart = (idCart, idUser) => {
       })
     } else {
       runQuery(`
-      SELECT _id,id_item,name_item,total_items,total_price FROM carts WHERE id_user=${idUser} && is_check_out=0;
-      SELECT SUM(total_price) AS totalPrice From carts WHERE id_user=${idUser} && is_check_out=0
+      SELECT _id,id_item,name_item,total_items,total_price FROM carts WHERE id_user=${idUser} AND is_check_out=0;
+      SELECT SUM(total_price) AS totalPrice From carts WHERE id_user=${idUser} AND is_check_out=0
       `, (err, results, fields) => {
         if (err) {
           return reject(new Error(err))
@@ -19,7 +19,7 @@ exports.GetUserCart = (idCart, idUser) => {
         if (!(results[1].length > 0)) {
           return resolve(false)
         }
-        return resolve({ totalPrice: results[2][0].totalPrice,totalItem: results[1].length, itemInCart: results[1] })
+        return resolve({ totalPrice: results[2][0].totalPrice, totalItem: results[1].length, itemInCart: results[1] })
       })
     }   
   })
@@ -28,7 +28,7 @@ exports.GetUserCart = (idCart, idUser) => {
 exports.AddItem = (idUser, dataItem) => {
   return new Promise((resolve, reject) => {
     const { idItem, nameItem, totalItem, totalPrice } = dataItem
-    runQuery(`SELECT COUNT(*) AS total FROM carts WHERE id_user=${idUser} && id_item=${idItem}`,
+    runQuery(`SELECT COUNT(*) AS total FROM carts WHERE id_user=${idUser} AND id_item=${idItem}`,
       (err, results, fields) => {
         if (err || results[1][0].total) {
           return reject(new Error(err || "Item Already Added, Check You Cart's for Update Or Delete Item"))
@@ -48,7 +48,7 @@ exports.AddItem = (idUser, dataItem) => {
 exports.UpdateItemCart = (idCart, idUser, dataItem) => {
   return new Promise((resolve, reject) => {
     const { totalItem, totalPrice } = dataItem
-    runQuery(`UPDATE carts SET total_items=${totalItem},total_price=${totalPrice} WHERE _id=${idCart} && id_user=${idUser} && is_check_out=0`,
+    runQuery(`UPDATE carts SET total_items=${totalItem},total_price=${totalPrice} WHERE _id=${idCart} AND id_user=${idUser} AND is_check_out=0`,
       (err, results, fields) => {
         if (err) {
           return reject(new Error(err))
@@ -61,7 +61,7 @@ exports.UpdateItemCart = (idCart, idUser, dataItem) => {
 
 exports.RemoveItemCart = (idCart, idUser) => {
   return new Promise((resolve, reject) => {
-    runQuery(`DELETE FROM carts WHERE _id=${idCart} && id_user=${idUser} && is_check_out=0`, (err, results, fields) => {
+    runQuery(`DELETE FROM carts WHERE _id=${idCart} AND id_user=${idUser} AND is_check_out=0`, (err, results, fields) => {
       if (err) {
         console.log(err)
         return reject(new Error(err))

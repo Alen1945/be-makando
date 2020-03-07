@@ -106,6 +106,8 @@ exports.CreateCategory = async (req, res, next) => {
           id: category
         }
       })
+    } else {
+      throw new Error('Failed to Create Review')
     }
   } catch (e) {
     console.log(e)

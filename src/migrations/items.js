@@ -24,7 +24,7 @@ const itemReviewsT = `
     _id INT(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     id_user INT(11) UNSIGNED DEFAULT 0 ,
     id_item INT(11) UNSIGNED DEFAULT 0,
-    rating ENUM('0S','1S','2S','3S','4S','5S') DEFAULT '0S',
+    rating TINYINT(1) UNSIGNED DEFAULT 0,
     review TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
