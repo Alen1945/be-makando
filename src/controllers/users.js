@@ -227,9 +227,9 @@ exports.ForgotPassword = async (req, res, next) => {
       if (code.status) {
         res.status(200).send({
           status: false,
+          msg: 'Request Success, You Can change your password',
           code_verify: code.codeVerify,
-          msg: 'Register Success, Please Verify Your Account',
-          url_to_verify: `${process.env.APP_URL}/forgot-password?code=${code.codeVerify}`
+          url_to_change: `${process.env.APP_URL}/forgot-password?code=${code.codeVerify}`
         })
       } else {
         throw new Error('Failed to Verify Your Account')
