@@ -4,16 +4,86 @@ const { runQuery } = require('../config/db')
 const { GetUser, CreateUser, VerifyUser, GetCodeVerify, ChangePassword, UpdateProfile, GetProfile, DeleteUser } = require('../models/users')
 const { validateUsernamePassword } = require('../utility/validate')
 require('dotenv').config()
+
+exports.GetAllUuser = async (req, res, next) => {
+  try {
+    const params = {
+      currentPage: req.query.page || 1,
+      perPage: req.query.limit || 5,
+      search: req.query.search || '',
+      sort: req.query.sort || [{ key: '_id', value: 0 }]
+    }
+    const column = ['_id', 'username', 'fullname', 'email', 'balance', 'gender', 'address']
+    if (req.query.search) {
+      params.search = Object.keys(params.search).map((v, i) => {
+        if (column.includes(v)) {
+          return { key: v, value: req.query.search[v] }
+        } else {
+          return [{ key: '_id', value: 0 }]
+        }
+      })
+    }
+    if (req.query.sort) {
+      params.sort = Object.keys(params.sort).map((v, i) => {
+        if (column.includes(v)) {
+          return { key: v, value: req.query.sort[v] }
+        } else {
+          return { key: '_id', value: 0 }
+        }
+      })
+    }
+    const dataUser = await GetProfile(false, params)
+
+    const totalPages = Math.ceil(dataUser.total / parseInt(params.perPage))
+    const query = req.query
+    query.page = parseInt(params.currentPage) + 1
+    const nextPage = (parseInt(params.currentPage) < totalPages ? process.env.APP_URL.concat(`${req.baseUrl}?${qs.stringify(query)}`) : null)
+    query.page = parseInt(params.currentPage) - 1
+    const previousPage = (parseInt(params.currentPage) > 1 ? process.env.APP_URL.concat(`${req.baseUrl}${qs.stringify(query)}`) : null)
+
+    const pagination = {
+      currentPage: params.currentPage,
+      nextPage,
+      previousPage,
+      totalPages,
+      perPage: params.perPage,
+      totalEntries: dataUser.total
+    }
+    if (dataUser.results.length > 0) {
+      res.status(200).send({
+        success: true,
+        data: dataUser.results,
+        pagination
+      })
+    } else {
+      res.status(200).send({
+        success: true,
+        data: false,
+        msg: 'Data is Empty'
+      })
+    }
+  } catch (e) {
+    console.log(e)
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
 exports.GetProfile = async (req, res, next) => {
   try {
-    const profileUser = await GetProfile(req.auth.id)
+    const profileUser = await GetProfile(req.params.id || req.auth.id)
     if (profileUser) {
       return res.status(200).send({
         success: true,
         data: profileUser
       })
     } else {
-      throw new Error('Your Account Has been deleted')
+      if (req.params.id) {
+        throw new Error('Account Not Exists')
+      } else {
+        throw new Error('Your Account Has been deleted')
+      }
     }
   } catch (e) {
     res.status(202).send({

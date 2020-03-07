@@ -28,6 +28,7 @@ app.post('/login', LoginUser)
 app.post('/forgot-password', ForgotPassword)
 
 app.get('/profile', checkAuthToken, GetProfile)
+app.get('/profile/:id', checkAuthToken, GetProfile)
 app.patch('/profile', checkAuthToken, UpdateUser)
 app.delete('/profile', checkAuthToken, DeleteAccount)
 app.post('/topup', checkAuthToken, TopUp)

@@ -1,5 +1,6 @@
 const { runQuery } = require('../config/db')
 const uuid = require('uuid').v1
+
 exports.GetUser = (id) => {
   return new Promise((resolve, reject) => {
     runQuery(`SELECT * from users WHERE _id=${id}`,
@@ -13,18 +14,41 @@ exports.GetUser = (id) => {
     )
   })
 }
-
-exports.GetProfile = (id) => {
+exports.GetProfile = (id, params) => {
   return new Promise((resolve, reject) => {
-    runQuery(`SELECT u._id,u.username,p.fullname, p.email,p.balance,p.gender,p.address from userProfile p INNER JOIN users u ON p.id_user=u._id WHERE u._id=${id}`,
-      (error, results, fields) => {
-        if (error) {
-          return reject(new Error(error))
-        } else {
-          return resolve(results[1][0])
+    if (id) {
+      runQuery(`SELECT u._id,u.username,p.fullname, p.email,p.balance,p.gender,p.address from userProfile p INNER JOIN users u ON p.id_user=u._id WHERE u._id=${id}`,
+        (error, results, fields) => {
+          if (error) {
+            return reject(new Error(error))
+          } else {
+            return resolve(results[1][0])
+          }
         }
-      }
-    )
+      )
+    } else {
+      const { perPage, currentPage, search, sort } = params
+      const condition = `
+          ${search && `WHERE ${search.map(v => `${v.key === '_id' || v.key === '_id' ? 'u.' + v.key : 'p.' + v.key} LIKE '%${v.value}%'`).join(' AND ')}`}
+          ORDER BY ${sort.map(v => `${v.key === '_id' || v.key === '_id' ? 'u.' + v.key : 'p.' + v.key} ${!v.value ? 'ASC' : 'DESC'}`).join(' , ')}
+          ${(parseInt(currentPage) && parseInt(perPage)) ? `LIMIT ${parseInt(perPage)} 
+          OFFSET ${(parseInt(currentPage) - 1) * parseInt(perPage)}` : ''}
+         `
+      runQuery(`
+        SELECT COUNT(u.username) AS total from userProfile p INNER JOIN users u ON p.id_user=u._id ${condition.substring(0, condition.indexOf('LIMIT'))};
+        SELECT u._id,u.username,p.fullname, p.email,p.balance,p.gender,p.address from userProfile p INNER JOIN users u ON p.id_user=u._id ${condition}
+      `, (err, results, fields) => {
+        if (err) {
+          return reject(new Error(err))
+        }
+        if (results[1][0]) {
+          const { total } = results[1][0]
+          return resolve({ results: results[2], total })
+        } else {
+          return resolve({ results: [], total: 0 })
+        }
+      })
+    }
   })
 }
 
