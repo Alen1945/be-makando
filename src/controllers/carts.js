@@ -131,7 +131,7 @@ exports.CheckOutItem = async (req, res, next) => {
     if (dataUser.balance < cart.totalPrice) {
       throw new Error('You Dont Have Enough balance')
     }
-    const checkout = CheckOutItem(idUser, parseFloat(cart.totalPrice))
+    const checkout = await CheckOutItem(idUser, parseFloat(cart.totalPrice))
     if (checkout) {
       res.status(200).send({
         success: true,

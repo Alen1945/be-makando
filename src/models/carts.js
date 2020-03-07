@@ -81,24 +81,35 @@ exports.RemoveItemCart = (idCart, idUser) => {
 
 exports.CheckOutItem = (idUser, price) => {
   return new Promise((resolve, reject) => {
-    runQuery(` SELECT id_item FROM carts WHERE id_user=${idUser} AND is_check_out=0`, (err, results, fields) => {
-      if (err) {
+    runQuery(` 
+      SELECT items._id,items.name,items.quantity,carts.id_item,carts.total_items FROM items INNER JOIN carts ON carts.id_item = items._id WHERE items.quantity < carts.total_items AND carts.id_user=${idUser} AND carts.is_check_out=0 ;
+      SELECT id_item FROM carts WHERE id_user=${idUser} AND is_check_out=0
+`, (err, results, fields) => {
+      if (!err) {
+        if (!results[1][0]) {
+          const itemId = results[2].map(v => v.id_item)
+          runQuery(`
+          UPDATE userProfile SET balance=balance-${parseFloat(price)} WHERE id_user = ${idUser};
+          UPDATE items INNER JOIN carts ON items._id = carts.id_item SET items.quantity = items.quantity - carts.total_items WHERE carts.id_user=${idUser} AND carts.is_check_out=0;
+          UPDATE carts SET is_check_out=1 WHERE id_user=${idUser} AND is_check_out=0;
+          INSERT INTO transcations(id_user,list_item,total_price) VALUES(${idUser},'${itemId.join(',')}',${price})
+          `, (err, results, fields) => {
+            if (err) {
+              console.log(err)
+              return reject(new Error(err))
+            } else {
+              return resolve(results[4].affectedRows)
+            }
+          })
+        } else {
+          const errQuantityItme = results[1].map((v) => {
+            return `${v.name} Only have ${v.quantity} But You want ${v.total_items}`
+          }).join(', ')
+          reject(new Error(errQuantityItme))
+        }
+      } else {
         console.log(err)
         return reject(new Error(err))
-      } else {
-        const itemId = results[1].map(v => v.id_item)
-        runQuery(`
-        UPDATE userProfile SET balance=balance-${parseFloat(price)} WHERE id_user = ${idUser};
-        UPDATE carts SET is_check_out=1 WHERE id_user=${idUser} AND is_check_out=0;
-        INSERT INTO transcations(id_user,list_item,total_price) VALUES(${idUser},'${itemId.join(',')}',${price})
-        `, (err, results, fields) => {
-          if (err) {
-            console.log(err)
-            return reject(new Error(err))
-          } else {
-            return resolve(results[3].affectedRows)
-          }
-        })
       }
     })
   })
