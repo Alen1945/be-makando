@@ -85,7 +85,7 @@ exports.GetDetailReview = async (req, res, next) => {
       res.status(200).send({
         success: true,
         data: false,
-        msg: `Review With id ${req.params.id} Not Exists`
+        msg: `You Never Review With id ${req.params.id}`
       })
     }
   } catch (e) {
@@ -107,7 +107,6 @@ exports.CreateReview = async (req, res, next) => {
       throw new Error('Rating must be number with value 1-5')
     }
     const dataItem = await GetItem(req.body.id_item)
-    console.log(dataItem)
     if (!dataItem) {
       throw new Error('Item Not Exists')
     }
@@ -135,10 +134,13 @@ exports.UpdateReview = async (req, res, next) => {
     if (!(Object.keys(req.body).length > 0)) {
       throw new Error('Please Defined What you want to update')
     }
+    if (req.body.rating && !([1, 2, 3, 4, 5].includes(parseInt(req.body.rating)))) {
+      throw new Error('Rating must be number with value 1-5')
+    }
     const { id } = req.params
     const dataReview = await GetReview(id, req.auth.id)
     if (!(dataReview)) {
-      throw new Error(`Never Review Item With id ${id}`)
+      throw new Error(`You Never Review Item With id ${id}`)
     }
     const fillAble = ['rating', 'review']
     const params = fillAble.map((v) => {

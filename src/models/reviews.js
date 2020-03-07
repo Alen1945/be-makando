@@ -16,7 +16,7 @@ exports.GetReview = (id, idUser, params) => {
       const { perPage, currentPage, search, sort } = params
       const condition = `
           ${search && `WHERE ${search.map(v => `${v.key} LIKE '%${v.value}%'`).join(' AND ')}`}
-          ${idUser ? `'AND id_user ='${idUser}` : ''}
+          ${idUser ? `AND id_user = ${idUser}` : ''}
           ORDER BY ${sort.map(v => `${v.key} ${!v.value ? 'ASC' : 'DESC'}`).join(' , ')}
           ${(parseInt(currentPage) && parseInt(perPage)) ? `LIMIT ${parseInt(perPage)} 
           OFFSET ${(parseInt(currentPage) - 1) * parseInt(perPage)}` : ''}
