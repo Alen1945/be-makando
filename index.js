@@ -12,7 +12,7 @@ const itemCategories = require('./src/routes/itemCategories')
 const items = require('./src/routes/items')
 const carts = require('./src/routes/carts')
 const Reviews = require('./src/routes/reviews')
-
+const { GuestCategories, GuestItems, GuestRestaurants } = require('./src/routes/guests')
 /* Middleware */
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -31,6 +31,10 @@ app.use('/restaurants', Restaurants)
 app.use('/categories', itemCategories)
 app.use('/items', items)
 app.use('/carts', carts)
+
+app.use('/browse-items', GuestItems)
+app.use('/browse-restaurants', GuestRestaurants)
+app.use('/browse-categories', GuestCategories)
 
 /* Server Listen */
 const PORT = 4000
