@@ -131,8 +131,8 @@ exports.CreateItem = async (req, res, next) => {
     const columns = []
     const values = []
     const fillAble = ['id_restaurant', 'id_category', 'name', 'price', 'images', 'decription']
-    Object.keys(req.body).forEach((v) => {
-      if (v && fillAble.includes(v) && req.body[v]) {
+    fillAble.forEach((v) => {
+      if (v && req.body[v]) {
         columns.push(v)
         values.push(req.body[v])
       }
@@ -181,8 +181,8 @@ exports.UpdateItem = async (req, res, next) => {
       })
     }
     const fillAble = ['id_category', 'name', 'quantity', 'price', 'images', 'decription']
-    const params = Object.keys(req.body).map((v) => {
-      if (v && fillAble.includes(v) && req.body[v]) {
+    const params = fillAble.map((v) => {
+      if (v && req.body[v]) {
         return { key: v, value: req.body[v] }
       } else {
         return null
