@@ -168,7 +168,7 @@ exports.ChangePassword = (code, password) => {
 }
 exports.UpdateProfile = (id, params) => {
   return new Promise((resolve, reject) => {
-    let query = []
+    const query = []
     const paramsUsers = params.slice().filter(v => ['username', 'password', 'status'].includes(v.key))
     const paramsProfile = params.slice().filter((v) => ['fullname', 'email', 'gender', 'balance', 'address', 'picture'].includes(v.key))
     if (paramsUsers.length > 0) {

@@ -32,6 +32,7 @@ app.use((req, res, next) => {
   }
   next()
 })
+
 /* Set ROUTES */
 app.post('/register', RegisterUser)
 app.get('/verify', Verify)
