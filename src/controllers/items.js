@@ -4,7 +4,7 @@ const { GetIdCategory } = require('../models/itemCategories')
 const { GetRestaurants } = require('../models/restaurants')
 const { GetUser } = require('../models/users')
 const { GetCategory } = require('../models/itemCategories')
-
+const uploads = require('../middleware/uploadFiles')
 exports.GetAllItem = async (req, res, next) => {
   try {
     const params = {
@@ -112,6 +112,7 @@ exports.GetDetailItem = async (req, res, next) => {
 
 exports.CreateItem = async (req, res, next) => {
   try {
+    await uploads(req, res, 'images')
     if (!req.body.id_restaurant || !req.body.id_category || !req.body.name || !req.body.price) {
       throw new Error('id_restaurant, id_category, name, and price is required')
     }
@@ -136,6 +137,10 @@ exports.CreateItem = async (req, res, next) => {
         values.push(req.body[v])
       }
     })
+    if (req.file) {
+      columns.push('images')
+      values.push(req.file.path)
+    }
     const item = await CreateItem({ columns, values })
     if (item) {
       res.status(201).send({
@@ -158,6 +163,7 @@ exports.CreateItem = async (req, res, next) => {
 
 exports.UpdateItem = async (req, res, next) => {
   try {
+    await uploads(req, res, 'images')
     if (!(Object.keys(req.body).length > 0)) {
       throw new Error('Please Defined What you want to update')
     }
@@ -182,6 +188,9 @@ exports.UpdateItem = async (req, res, next) => {
         return null
       }
     }).filter(v => v)
+    if (req.file) {
+      params.push({ key: 'images', value: req.file.path })
+    }
     if (params.length > 0) {
       const update = await UpdateItem(id, params)
       if (update) {
