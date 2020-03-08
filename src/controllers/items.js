@@ -1,5 +1,6 @@
 const qs = require('qs')
 const { GetItem, CreateItem, UpdateItem, DeleteItem } = require('../models/items')
+const { GetIdCategory } = require('../models/itemCategories')
 const { GetRestaurants } = require('../models/restaurants')
 const { GetUser } = require('../models/users')
 const { GetCategory } = require('../models/itemCategories')
@@ -9,7 +10,7 @@ exports.GetAllItem = async (req, res, next) => {
     const params = {
       currentPage: req.query.page || 1,
       perPage: req.query.limit || 5,
-      search: req.query.search || '',
+      search: req.query.search || [{ key: 'name', value: '' }],
       sort: req.query.sort || [{ key: 'name', value: 0 }]
     }
     const column = ['_id', 'name', 'price', 'description']
@@ -18,7 +19,7 @@ exports.GetAllItem = async (req, res, next) => {
         if (column.includes(v)) {
           return { key: v, value: req.query.search[v] }
         } else {
-          return [{ key: 'name', value: 0 }]
+          return { key: 'name', value: '' }
         }
       })
     }
@@ -30,6 +31,10 @@ exports.GetAllItem = async (req, res, next) => {
           return { key: 'name', value: 0 }
         }
       })
+    }
+    if (req.query.search && req.query.search.category) {
+      const idcategory = await GetIdCategory(req.query.search.category)
+      params.id_category = idcategory
     }
     const dataItems = await GetItem(false, params)
 

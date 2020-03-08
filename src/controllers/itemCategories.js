@@ -7,7 +7,7 @@ exports.GetAllCategory = async (req, res, next) => {
     const params = {
       currentPage: req.query.page || 1,
       perPage: req.query.limit || 5,
-      search: req.query.search || '',
+      search: req.query.search || [{ key: 'name', value: '' }],
       sort: req.query.sort || [{ key: 'name', value: 0 }]
     }
     const column = ['_id', 'name']
@@ -16,7 +16,7 @@ exports.GetAllCategory = async (req, res, next) => {
         if (column.includes(v)) {
           return { key: v, value: req.query.search[v] }
         } else {
-          return [{ key: 'name', value: 0 }]
+          return [{ key: 'name', value: '' }]
         }
       })
     }
@@ -75,7 +75,7 @@ exports.GetDetailCategory = async (req, res, next) => {
       const params = {
         currentPage: req.query.page || 1,
         perPage: req.query.limit || 5,
-        search: req.query.search || '',
+        search: req.query.search || [{ key: 'name', value: '' }],
         sort: req.query.sort || [{ key: 'name', value: 0 }],
         id_category: [req.params.id]
       }
@@ -85,7 +85,7 @@ exports.GetDetailCategory = async (req, res, next) => {
           if (column.includes(v)) {
             return { key: v, value: req.query.search[v] }
           } else {
-            return [{ key: 'name', value: 0 }]
+            return [{ key: 'name', value: '' }]
           }
         })
       }

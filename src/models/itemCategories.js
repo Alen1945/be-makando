@@ -34,7 +34,24 @@ exports.GetCategory = (id, params) => {
     }
   })
 }
-
+exports.GetIdCategory = (nameCategory) => {
+  return new Promise((resolve, reject) => {
+    runQuery(`
+        SELECT _id from itemCategories WHERE name LIKE '%${nameCategory}%'
+      `, (err, results, fields) => {
+      if (err) {
+        console.log(err)
+        return reject(new Error(err))
+      }
+      if (results[1][0]) {
+        const idCategory = results[1].map(v => v._id)
+        return resolve(idCategory)
+      } else {
+        return resolve(false)
+      }
+    })
+  })
+}
 exports.CreateCategory = (name) => {
   return new Promise((resolve, reject) => {
     runQuery(`SELECT COUNT(*) as total FROM itemCategories WHERE name='${name}'`, (err, results, fields) => {
