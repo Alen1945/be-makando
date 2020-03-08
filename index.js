@@ -68,7 +68,8 @@ app.use('/browse-restaurants', GuestRestaurants)
 app.use('/browse-categories', GuestCategories)
 
 /* Server Listen */
-const PORT = 4000
+require('dotenv').config
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log('Server Listen on Port ' + PORT)
 })
