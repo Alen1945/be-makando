@@ -35,23 +35,15 @@ exports.GetRestaurants = (id, params) => {
   })
 }
 
-exports.CreateRestaurant = (data) => {
+exports.CreateRestaurant = (idOwner, data) => {
   return new Promise((resolve, reject) => {
-    let columns = []
-    let values = []
-    Object.keys(data).forEach((v) => {
-      if (v && ['id_owner', 'name', 'logo', 'location', 'decription'].includes(v) && data[v]) {
-        columns.push(v)
-        values.push(data[v])
-      }
-    })
-    runQuery(`SELECT COUNT(*) AS total FROM users WHERE _id=${data.id_owner}`, (err, results, fields) => {
+    runQuery(`SELECT COUNT(*) AS total FROM users WHERE _id=${idOwner}`, (err, results, fields) => {
       if (err || !results[1][0].total) {
         return resolve(err || 'Owner id Not Registered')
       }
       runQuery(`
-      INSERT INTO restaurants(${columns.map(v => v).join(',')}) VALUES(${values.map(v => `'${v}'`).join(',')});
-      UPDATE users SET is_admin = 1 WHERE _id=${data.id_owner}
+      INSERT INTO restaurants(${data.columns.map(v => v).join(',')}) VALUES(${data.values.map(v => `'${v}'`).join(',')});
+      UPDATE users SET is_admin = 1 WHERE _id=${idOwner}
     `, (err, results, fields) => {
         if (err) {
           return reject(new Error(err))

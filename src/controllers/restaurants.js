@@ -1,6 +1,7 @@
 const qs = require('qs')
 const { GetRestaurants, CreateRestaurant, UpdateRestaurant, DeleteRestaurant } = require('../models/restaurants')
 const { GetUser } = require('../models/users')
+const uploads = require('../middleware/uploadFiles')
 exports.GetAllRestaurant = async (req, res, next) => {
   try {
     const params = {
@@ -85,10 +86,24 @@ exports.GetDetailRestaurant = async (req, res, next) => {
 
 exports.CreateRestaurant = async (req, res, next) => {
   try {
+    await uploads(req, res, 'logo')
     if (!req.body.id_owner || !req.body.name) {
       throw new Error('id owner and name is required')
     }
-    const restaurant = await CreateRestaurant(req.body)
+    const fillable = ['id_owner', 'name', 'logo', 'location', 'decription']
+    const columns = []
+    const values = []
+    fillable.forEach((v) => {
+      if (v && req.body[v]) {
+        columns.push(v)
+        values.push(req.body[v])
+      }
+    })
+    if (req.file) {
+      columns.push('logo')
+      values.push(req.file.path)
+    }
+    const restaurant = await CreateRestaurant(req.body.id_owner, { columns, values })
     if (restaurant) {
       res.status(201).send({
         success: true,
@@ -110,6 +125,7 @@ exports.CreateRestaurant = async (req, res, next) => {
 
 exports.UpdateRestaurant = async (req, res, next) => {
   try {
+    await uploads(req, res, 'logo')
     if (!(Object.keys(req.body).length > 0)) {
       throw new Error('Please Defined What you want to update')
     }
@@ -125,13 +141,17 @@ exports.UpdateRestaurant = async (req, res, next) => {
         msg: 'To Update You Must Superadmin Or Owner of this Restaurant'
       })
     }
-    const params = Object.keys(req.body).map((v) => {
-      if (v && ['name', 'logo', 'location', 'decription'].includes(v) && req.body[v]) {
+    const fillable = ['name', 'logo', 'location', 'decription']
+    const params = fillable.map((v) => {
+      if (v && req.body[v]) {
         return { key: v, value: req.body[v] }
       } else {
         return null
       }
     }).filter(v => v)
+    if (req.file) {
+      params.push({ key: 'logo', value: req.file.path })
+    }
     if (params.length > 0) {
       const update = await UpdateRestaurant(id, params)
       if (update) {
