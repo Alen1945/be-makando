@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const path = require('path')
 const app = express()
 
 /* Import Controllers */
@@ -18,7 +19,7 @@ const { GuestCategories, GuestItems, GuestRestaurants } = require('./src/routes/
 /* Middleware */
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 /* Import Middleware */
 const checkAuthToken = require('./src/middleware/authMiddleware')
 

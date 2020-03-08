@@ -90,7 +90,7 @@ exports.GetDetailItem = async (req, res, next) => {
         success: true,
         data: {
           ...dataitem,
-          relatedItem: relatedItem.results
+          relatedItem: relatedItem.results.filter(v => v._id !== dataitem._id)
         }
 
       })

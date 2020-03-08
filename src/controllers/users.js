@@ -4,6 +4,7 @@ const qs = require('qs')
 const { runQuery } = require('../config/db')
 const { GetUser, CreateUser, VerifyUser, GetCodeVerify, ChangePassword, UpdateProfile, GetProfile, DeleteUser } = require('../models/users')
 const { validateUsernamePassword } = require('../utility/validate')
+const uploads = require('../middleware/uploadFiles')
 require('dotenv').config()
 
 exports.GetAllUuser = async (req, res, next) => {
@@ -164,6 +165,7 @@ exports.LoginUser = async (req, res, next) => {
 
 exports.UpdateUser = async (req, res, next) => {
   try {
+    await uploads(req, res, 'picture')
     const { id } = req.auth
     const fillable = ['username', 'fullname', 'email', 'gender', 'address', 'picture']
     const params = Object.keys(req.body).map((v) => {
@@ -173,7 +175,9 @@ exports.UpdateUser = async (req, res, next) => {
         return null
       }
     }).filter(o => o)
-
+    if (req.file) {
+      params.push({ key: 'picture', value: req.file.path })
+    }
     if (req.body.old_password) {
       const user = await GetUser(id)
       const oldPassword = user.password
