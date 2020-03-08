@@ -35,10 +35,19 @@ app.use((req, res, next) => {
 })
 
 /* Set ROUTES */
+
+/* Redirect To api Docs */
+app.get('/', (req, res, next) => {
+  res.redirect('/api-docs')
+})
+/* API DOCS */
+app.use('/api-docs', require('./src/docs/'))
+
 app.post('/register', RegisterUser)
 app.get('/verify', Verify)
 app.post('/login', LoginUser)
 app.post('/forgot-password', ForgotPassword)
+app.post('/change-password', ForgotPassword)
 
 app.get('/profile', checkAuthToken, GetProfile)
 app.get('/profile/:id', checkAuthToken, GetProfile)
