@@ -123,8 +123,9 @@ exports.GetDetailCategory = async (req, res, next) => {
       } else {
         res.status(200).send({
           success: true,
-          data: false,
-          msg: 'Data is Empty'
+          ...dataCategory,
+          dataItems: false,
+          msg: 'Items with this category is Empty'
         })
       }
     } else {
