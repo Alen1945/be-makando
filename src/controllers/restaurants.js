@@ -10,7 +10,7 @@ exports.GetAllRestaurant = async (req, res, next) => {
       search: req.query.search || '',
       sort: req.query.sort || [{ key: 'name', value: 0 }]
     }
-    const column = ['_id', 'name', 'location', 'description']
+    const column = ['_id', 'name', 'address', 'description']
     if (req.query.search) {
       params.search = Object.keys(params.search).map((v, i) => {
         if (column.includes(v)) {
@@ -71,10 +71,18 @@ exports.GetAllRestaurant = async (req, res, next) => {
 exports.GetDetailRestaurant = async (req, res, next) => {
   try {
     const dataRestaurant = await GetRestaurants(req.params.id)
-    res.status(200).send({
-      success: true,
-      data: dataRestaurant
-    })
+    if (dataRestaurant) {
+      res.status(200).send({
+        success: true,
+        data: dataRestaurant
+      })
+    } else {
+      res.status(200).send({
+        success: true,
+        data: false,
+        msg: `Restaurants With id ${req.params.id} Not Exists`
+      })
+    }
   } catch (e) {
     console.log(e)
     res.status(202).send({
@@ -90,7 +98,7 @@ exports.CreateRestaurant = async (req, res, next) => {
     if (!req.body.id_owner || !req.body.name) {
       throw new Error('id owner and name is required')
     }
-    const fillable = ['id_owner', 'name', 'logo', 'location', 'decription']
+    const fillable = ['id_owner', 'name', 'logo', 'address', 'description']
     const columns = []
     const values = []
     fillable.forEach((v) => {
@@ -141,7 +149,7 @@ exports.UpdateRestaurant = async (req, res, next) => {
         msg: 'To Update You Must Superadmin Or Owner of this Restaurant'
       })
     }
-    const fillable = ['name', 'logo', 'location', 'decription']
+    const fillable = ['name', 'logo', 'address', 'decription']
     const params = fillable.map((v) => {
       if (v && req.body[v]) {
         return { key: v, value: req.body[v] }
