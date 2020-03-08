@@ -5,7 +5,7 @@ const apiDocs = require('./apiDocs')
 require('dotenv').config()
 
 const docsPath = './src/docs/documents/'
-const docsUrl = '/api-docs/'
+const docsUrl = '/api-docs/documents/'
 const apiDocsSettings = {
   openapi: '3.0.0',
   info: {
@@ -14,7 +14,16 @@ const apiDocsSettings = {
     description: 'API for Development'
   },
   host: process.env.APP_URL,
-  basePath: '/'
+  basePath: '/',
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT'
+      }
+    }
+  }
 }
 
 const swaggerOptions = {
@@ -27,7 +36,7 @@ const swaggerOptions = {
 Doc.use('/', swaggerUi.serve)
 Doc.get('/', swaggerUi.setup(null, swaggerOptions))
 
-Doc.get('/:name', (req, res, next) => {
+Doc.get('/documents/:name', (req, res, next) => {
   res.setHeader('Content-Type', 'application/json')
   res.send({
     ...apiDocsSettings,

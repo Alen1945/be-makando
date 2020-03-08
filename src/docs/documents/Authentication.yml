@@ -1,13 +1,13 @@
 /register:
   post:
     tags:
-      - Authenctication
+      - Authentication
     summary: Register New Account
     description: Use For Register New Account
     requestBody:
       required: true
       content:
-        application/json:
+        application/x-www-form-urlencoded:
           schema:
             type: object
             required:
@@ -33,7 +33,7 @@
 /verify:
   get:
     tags:
-      - Authenctication
+      - Authentication
     summary: Verify New Account
     description: Use To Verify New Account
     parameters:
@@ -55,13 +55,13 @@
 /login:
   post:
     tags:
-      - Authenctication
+      - Authentication
     summary: Login to Account
     description: Login to Account
     requestBody:
       required: true
       content:
-        application/json:
+        application/x-www-form-urlencoded:
           schema:
             type: object
             require:
@@ -87,13 +87,13 @@
 /forgot-password:
   post:
     tags:
-      - Authenctication
+      - Authentication
     summary: Forgot Password
     description: Use When Your Forgot Password
     requestBody:
       required: true
       content:
-        application/json:
+        application/x-www-form-urlencoded:
           schema:
             type: object
             require:
@@ -115,7 +115,7 @@
 /change-password:
   post:
     tags:
-      - Authenctication
+      - Authentication
     summary: Change Forgot Password
     description: Use After Your Get Code Verify To Change Forgot Password
     parameters:
@@ -127,7 +127,7 @@
     requestBody:
       required: true
       content:
-        application/json:
+        application/x-www-form-urlencoded:
           schema:
             type: object
             require:

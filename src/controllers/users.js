@@ -305,7 +305,7 @@ exports.ForgotPassword = async (req, res, next) => {
       const code = await GetCodeVerify(req.body.username)
       if (code.status) {
         res.status(200).send({
-          status: false,
+          status: true,
           msg: 'Request Success, You Can change your password',
           code_verify: code.codeVerify,
           url_to_change: `${process.env.APP_URL}/forgot-password?code=${code.codeVerify}`
