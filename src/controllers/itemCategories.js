@@ -1,5 +1,6 @@
 const qs = require('qs')
 const { GetCategory, CreateCategory, UpdateCategory, DeleteCategory } = require('../models/itemCategories')
+const { GetItem } = require('../models/items')
 
 exports.GetAllCategory = async (req, res, next) => {
   try {
@@ -71,10 +72,61 @@ exports.GetDetailCategory = async (req, res, next) => {
   try {
     const dataCategory = await GetCategory(req.params.id)
     if (dataCategory) {
-      res.status(200).send({
-        success: true,
-        data: dataCategory
-      })
+      const params = {
+        currentPage: req.query.page || 1,
+        perPage: req.query.limit || 5,
+        search: req.query.search || '',
+        sort: req.query.sort || [{ key: 'name', value: 0 }],
+        id_category: [req.params.id]
+      }
+      const column = ['_id', 'name', 'price', 'description']
+      if (req.query.search) {
+        params.search = Object.keys(params.search).map((v, i) => {
+          if (column.includes(v)) {
+            return { key: v, value: req.query.search[v] }
+          } else {
+            return [{ key: 'name', value: 0 }]
+          }
+        })
+      }
+      if (req.query.sort) {
+        params.sort = Object.keys(params.sort).map((v, i) => {
+          if (column.includes(v)) {
+            return { key: v, value: req.query.sort[v] }
+          } else {
+            return { key: 'name', value: 0 }
+          }
+        })
+      }
+      const dataItems = await GetItem(false, params)
+      const totalPages = Math.ceil(dataItems.total / parseInt(params.perPage))
+      const query = req.query
+      query.page = parseInt(params.currentPage) + 1
+      const nextPage = (parseInt(params.currentPage) < totalPages ? process.env.APP_URL.concat(`${req.originalUrl.substring(0, req.originalUrl.indexOf('?'))}?${qs.stringify(query)}`) : null)
+      query.page = parseInt(params.currentPage) - 1
+      const previousPage = (parseInt(params.currentPage) > 1 ? process.env.APP_URL.concat(`${req.originalUrl.substring(0, req.originalUrl.indexOf('?'))}${qs.stringify(query)}`) : null)
+      const pagination = {
+        currentPage: params.currentPage,
+        nextPage,
+        previousPage,
+        totalPages,
+        perPage: params.perPage,
+        totalEntries: dataItems.total
+      }
+      if (dataItems.results.length > 0) {
+        res.status(200).send({
+          success: true,
+          ...dataCategory,
+          dataItems: dataItems.results,
+          pagination
+        })
+      } else {
+        res.status(200).send({
+          success: true,
+          data: false,
+          msg: 'Data is Empty'
+        })
+      }
     } else {
       res.status(200).send({
         success: true,
