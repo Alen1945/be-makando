@@ -6,6 +6,6 @@ const permission = require('../middleware/authPermissions')
 itemCategories.get('/', checkAuthToken, GetAllCategory)
 itemCategories.get('/:id', checkAuthToken, GetDetailCategory)
 itemCategories.post('/', checkAuthToken, permission.superadmin, CreateCategory)
-itemCategories.put('/:id', checkAuthToken, permission.superadmin, UpdateCategory)
+itemCategories.patch('/:id', checkAuthToken, permission.superadmin, UpdateCategory)
 itemCategories.delete('/:id', checkAuthToken, permission.superadmin, DeleteCategory)
 module.exports = itemCategories

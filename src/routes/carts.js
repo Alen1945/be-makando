@@ -4,6 +4,6 @@ const { GetAllCart, AddItem, UpdateItemCart, RemoveItemCart } = require('../cont
 
 Carts.get('/', checkAuthToken, GetAllCart)
 Carts.post('/', checkAuthToken, AddItem)
-Carts.put('/:id', checkAuthToken, UpdateItemCart)
+Carts.patch('/:id', checkAuthToken, UpdateItemCart)
 Carts.delete('/:id', checkAuthToken, RemoveItemCart)
 module.exports = Carts

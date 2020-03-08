@@ -15,12 +15,13 @@ exports.GetReview = (id, idUser, params) => {
     } else {
       const { perPage, currentPage, search, sort } = params
       const condition = `
-          ${search && `WHERE ${search.map(v => `${v.key} LIKE '%${v.value}%'`).join(' AND ')}`}
-          ${idUser ? `AND id_user = ${idUser}` : ''}
+          ${idUser ? `WHERE id_user = ${idUser}` : ''}
+          ${search && `${idUser ? 'AND' : 'WHERE'} ${search.map(v => `${v.key} LIKE '%${v.value}%'`).join(' AND ')}`}
           ORDER BY ${sort.map(v => `${v.key} ${!v.value ? 'ASC' : 'DESC'}`).join(' , ')}
           ${(parseInt(currentPage) && parseInt(perPage)) ? `LIMIT ${parseInt(perPage)} 
           OFFSET ${(parseInt(currentPage) - 1) * parseInt(perPage)}` : ''}
          `
+      console.log(condition)
       runQuery(`
         SELECT COUNT(*) AS total from itemReviews ${condition.substring(0, condition.indexOf('LIMIT'))};
         SELECT * from itemReviews ${condition}
@@ -38,7 +39,33 @@ exports.GetReview = (id, idUser, params) => {
     }
   })
 }
-
+exports.GetReviewItem = (idItem, params) => {
+  return new Promise((resolve, reject) => {
+    const { perPage, currentPage, search, sort } = params
+    const condition = `
+        ${idItem ? `WHERE id_item = ${idItem}` : ''}
+        ${search && `${idItem ? 'AND' : 'WHERE'} ${search.map(v => `${v.key} LIKE '%${v.value}%'`).join(' AND ')}`}
+        ORDER BY ${sort.map(v => `${v.key} ${!v.value ? 'ASC' : 'DESC'}`).join(' , ')}
+        ${(parseInt(currentPage) && parseInt(perPage)) ? `LIMIT ${parseInt(perPage)} 
+        OFFSET ${(parseInt(currentPage) - 1) * parseInt(perPage)}` : ''}
+        `
+    runQuery(`
+      SELECT COUNT(*) AS total from itemReviews ${condition.substring(0, condition.indexOf('LIMIT'))};
+      SELECT * from itemReviews ${condition}
+    `, (err, results, fields) => {
+      if (err) {
+        return reject(new Error(err))
+      }
+      if (results[1][0]) {
+        const { total } = results[1][0]
+        console.log(results[2])
+        return resolve({ results: results[2], total })
+      } else {
+        return resolve({ results: [], total: 0 })
+      }
+    })
+  })
+}
 exports.CreateReview = (idUser, params) => {
   return new Promise((resolve, reject) => {
     runQuery(`SELECT COUNT(*) as total FROM itemReviews WHERE id_user='${idUser} AND id_item=${params.id_item}'`, (err, results, fields) => {
