@@ -24,7 +24,7 @@
       201:
         description: Create Success
       202:
-        description: No Action Performed
+        description: Request Accepted  but the processing has not been completed
       400:
         description: Error
       500:
@@ -46,7 +46,7 @@
       200:
         description: Success
       202:
-        description: No Action Performed
+        description: Request Accepted  but the processing has not been completed
       400:
         description: Error
       500:
@@ -78,7 +78,7 @@
       200:
         description: Success
       202:
-        description: No Action Performed
+        description: Request Accepted  but the processing has not been completed
       400:
         description: Error
       500:
@@ -106,7 +106,7 @@
       200:
         description: Success
       202:
-        description: No Action Performed
+        description: Request Accepted  but the processing has not been completed
       400:
         description: Error
       500:
@@ -144,7 +144,7 @@
       200:
         description: Success
       202:
-        description: No Action Performed
+        description: Request Accepted  but the processing has not been completed
       400:
         description: Error
       500:
