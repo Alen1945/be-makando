@@ -36,7 +36,7 @@ exports.GetProfile = (id, params) => {
          `
       runQuery(`
         SELECT COUNT(u.username) AS total from userProfile p INNER JOIN users u ON p.id_user=u._id ${condition.substring(0, condition.indexOf('LIMIT'))};
-        SELECT u._id,u.username,p.fullname, p.email,p.balance,p.gender,p.address from userProfile p INNER JOIN users u ON p.id_user=u._id ${condition}
+        SELECT u._id,u.username,p.fullname, p.email,p.balance,p.gender,p.address,p.picture from userProfile p INNER JOIN users u ON p.id_user=u._id ${condition}
       `, (err, results, fields) => {
         if (err) {
           return reject(new Error(err))
