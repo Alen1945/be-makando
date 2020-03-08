@@ -78,10 +78,21 @@ exports.GetAllItem = async (req, res, next) => {
 exports.GetDetailItem = async (req, res, next) => {
   try {
     const dataitem = await GetItem(req.params.id)
+    const relatedItem = await GetItem(false, {
+      id_category: [dataitem.id_category],
+      search: '',
+      currentPage: 1,
+      perPage: 5,
+      sort: [{ key: 'name', value: 0 }]
+    })
     if (dataitem) {
       res.status(200).send({
         success: true,
-        data: dataitem
+        data: {
+          ...dataitem,
+          relatedItem: relatedItem.results
+        }
+
       })
     } else {
       res.status(200).send({
