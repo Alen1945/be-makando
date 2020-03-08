@@ -10,7 +10,7 @@ exports.GetAllItem = async (req, res, next) => {
     const params = {
       currentPage: req.query.page || 1,
       perPage: req.query.limit || 5,
-      search: req.query.search || [{ key: 'name', value: '' }],
+      search: req.query.search || '',
       sort: req.query.sort || [{ key: 'name', value: 0 }]
     }
     const column = ['_id', 'name', 'price', 'description']
@@ -19,7 +19,7 @@ exports.GetAllItem = async (req, res, next) => {
         if (column.includes(v)) {
           return { key: v, value: req.query.search[v] }
         } else {
-          return { key: 'name', value: '' }
+          return ''
         }
       })
     }
@@ -34,7 +34,7 @@ exports.GetAllItem = async (req, res, next) => {
     }
     if (req.query.search && req.query.search.category) {
       const idcategory = await GetIdCategory(req.query.search.category)
-      params.id_category = idcategory
+      params.id_category = idcategory || [0]
     }
     const dataItems = await GetItem(false, params)
 

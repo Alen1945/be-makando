@@ -12,8 +12,8 @@ exports.GetItem = (id, params) => {
     } else {
       const { perPage, currentPage, search, sort } = params
       const condition = `
-          ${search && `WHERE ${params.id_category ? `id_category IN (${params.id_category.join(',')}) AND` : ''}
-          ${search.map(v => `${v.key} LIKE '%${v.value}%'`).join(' AND ')}`}
+          ${params.id_category ? `WHERE id_category IN (${params.id_category.join(',')})` : ''}
+          ${search && search[0] && `${params.id_category ? 'AND' : 'WHERE'} ${search.map(v => `${v.key} LIKE '%${v.value}%'`).join(' AND ')}`}
           ORDER BY ${sort.map(v => `${v.key} ${!v.value ? 'ASC' : 'DESC'}`).join(' , ')}
           ${(parseInt(currentPage) && parseInt(perPage)) ? `LIMIT ${parseInt(perPage)} 
           OFFSET ${(parseInt(currentPage) - 1) * parseInt(perPage)}` : ''}
