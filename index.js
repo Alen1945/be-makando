@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const path = require('path')
 const app = express()
-
+require('dotenv').config()
 /* Import Controllers */
 const { TopUp, Verify, ForgotPassword } = require('./src/controllers/users')
 const { CheckOutItem } = require('./src/controllers/carts')
@@ -68,7 +68,6 @@ app.use('/browse-restaurants', GuestRestaurants)
 app.use('/browse-categories', GuestCategories)
 
 /* Server Listen */
-require('dotenv').config
 const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log('Server Listen on Port ' + PORT)

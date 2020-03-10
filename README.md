@@ -20,7 +20,7 @@ Express.js is a web application framework for Node.js. [More about Express](http
 3. Make new file a called **.env**, set up first [here](#set-up-env-file)
 4. Turn on Web Server and MySQL can using Third-party tool like xampp, etc.
 5. Open CMD or Terminal and Type `npm run-script migrate`
-6. open application In Browser (ex: localhost:3000/api-docs)
+6. open application In Browser (ex: localhost:4000/api-docs)
 8. You can see all the end point
 8.  Note : create folder `Uploads`in app's directory for uploads file
 

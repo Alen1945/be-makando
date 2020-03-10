@@ -150,7 +150,7 @@ exports.GetDetailReview = async (req, res, next) => {
       res.status(200).send({
         success: true,
         data: false,
-        msg: `You Never Review With id ${req.params.id}`
+        msg: `You Never Review item With id ${req.params.id}`
       })
     }
   } catch (e) {

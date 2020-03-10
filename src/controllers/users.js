@@ -127,6 +127,7 @@ exports.RegisterUser = async (req, res, next) => {
 
 exports.LoginUser = async (req, res, next) => {
   try {
+    console.log(req.body)
     const { username, password } = req.body
     if (username && password) {
       const dataLogin = await new Promise((resolve, reject) => {
