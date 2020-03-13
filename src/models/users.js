@@ -69,17 +69,17 @@ exports.CreateUser = (data, isAdmin) => {
                 return reject(new Error(err))
               } else {
                 const codeVerify = uuid()
-                sendEmail(email, codeVerify).then((status) => {
-                  runQuery(`INSERT INTO userProfile(email,id_user, code_verify ) VALUES('${email}',${results[1].insertId},'${codeVerify}')`,
-                    (err, results, fields) => {
-                      if (!err) {
+                runQuery(`INSERT INTO userProfile(email,id_user, code_verify ) VALUES('${email}',${results[1].insertId},'${codeVerify}')`,
+                  (err, results, fields) => {
+                    if (!err) {
+                      sendEmail(email, codeVerify).then((status) => {
                         return resolve(true)
-                      }
-                      console.log(err)
-                    })
-                }).catch((e) => {
-                  reject(e)
-                })
+                      }).catch((e) => {
+                        reject(e)
+                      })
+                    }
+                    console.log(err)
+                  })
               }
             })
         } else {
