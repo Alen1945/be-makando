@@ -96,25 +96,23 @@ exports.GetProfile = async (req, res, next) => {
 }
 exports.RegisterUser = async (req, res, next) => {
   try {
-    const { username, password } = req.body
+    const { username, password, email } = req.body
     if (username && password) {
       const validate = validateUsernamePassword(username, password)
       if (validate.val) {
         const hashPassword = bcrypt.hashSync(password)
-        const statusRegister = await CreateUser({ username, password: hashPassword }, false)
-        if (statusRegister && statusRegister.status) {
+        const statusRegister = await CreateUser({ username, password: hashPassword, email }, false)
+        if (statusRegister) {
           res.status(201).send({
             success: true,
-            code_verify: statusRegister.codeVerify,
-            msg: 'Register Success, Please Verify Your Account',
-            url_to_verify: `${process.env.APP_URL}/verify?code=${statusRegister.codeVerify}`
+            msg: `Register Success, Please check ${email} to Verify Your Account`,
           })
         }
       } else {
         throw new Error(validate.message)
       }
     } else {
-      throw new Error('Username and Password is Required')
+      throw new Error('Username, Password, and email is Required')
     }
   } catch (e) {
     console.log(e)
