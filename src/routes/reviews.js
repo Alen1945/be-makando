@@ -2,7 +2,7 @@ const Reviews = require('express').Router()
 const { GetAllReview, GetAllReviewItem, GetDetailReview, CreateReview, UpdateReview, DeleteReview } = require('../controllers/reviews')
 const checkAuthToken = require('../middleware/authMiddleware')
 
-Reviews.get('/', GetAllReview)
+Reviews.get('/', checkAuthToken, GetAllReview)
 Reviews.post('/', checkAuthToken, CreateReview)
 Reviews.get('/:id', GetDetailReview)
 Reviews.get('/items/:id', GetAllReviewItem)
