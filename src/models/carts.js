@@ -37,8 +37,18 @@ exports.AddItem = (idUser, dataItem) => {
     const { idItem, nameItem, totalItem, totalPrice } = dataItem
     runQuery(`SELECT COUNT(*) AS total FROM carts WHERE id_user=${idUser} AND id_item=${idItem} AND is_check_out=0`,
       (err, results, fields) => {
-        if (err || results[1][0].total) {
-          return reject(new Error(err || "Item Already Added, Check You Cart's for Update Or Delete Item"))
+        if (err) {
+          return reject(new Error(err))
+        }
+        if (results[1][0].total) {
+          return runQuery(`UPDATE carts SET total_items=total_items+${totalItem},total_price=total_price+${totalPrice} WHERE id_item=${idItem} AND id_user=${idUser} AND is_check_out=0`,
+            (err, results, fields) => {
+              if (err) {
+                return reject(new Error(err))
+              }
+              console.log(results[1].affectedRows)
+              return resolve('update')
+            })
         }
         runQuery(`INSERT INTO carts(id_user,id_item,name_item,total_items,total_price) VALUES(${idUser},${idItem},'${nameItem}',${totalItem},${totalPrice})`,
           (err, results, fields) => {
