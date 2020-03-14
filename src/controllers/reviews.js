@@ -4,7 +4,7 @@ const { GetItem } = require('../models/items')
 
 exports.GetAllReview = async (req, res, next) => {
   try {
-    const idUser = req.auth.id
+    const idUser = req.auth ? req.auth.id : 0
     const params = {
       currentPage: req.query.page || 1,
       perPage: req.query.limit || 5,
@@ -176,7 +176,6 @@ exports.CreateReview = async (req, res, next) => {
       throw new Error('Item Not Exists')
     }
     const datareview = await CreateReview(idUser, req.body)
-    console.log(datareview)
     if (datareview) {
       res.status(201).send({
         success: true,

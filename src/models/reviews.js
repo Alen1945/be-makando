@@ -68,7 +68,7 @@ exports.GetReviewItem = (idItem, params) => {
 }
 exports.CreateReview = (idUser, params) => {
   return new Promise((resolve, reject) => {
-    runQuery(`SELECT COUNT(*) as total FROM itemReviews WHERE id_user='${idUser} AND id_item=${params.id_item}'`, (err, results, fields) => {
+    runQuery(`SELECT COUNT(*) as total FROM itemReviews WHERE id_user=${idUser} AND id_item=${params.id_item}`, (err, results, fields) => {
       if (err || results[1][0].total) {
         return reject(new Error(err || 'Already Review this item You Can Update or Delete this review'))
       }
