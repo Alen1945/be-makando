@@ -155,8 +155,7 @@ exports.LoginUser = async (req, res, next) => {
         success: true,
         msg: 'Login Success',
         data: {
-          token,
-          role: dataLogin.role
+          token
         }
       })
     } else {
