@@ -12,14 +12,14 @@ exports.GetItem = (id, params) => {
     } else {
       const { perPage, currentPage, search, sort } = params
       const condition = `
-          ${params.id_category ? `WHERE id_category IN (${params.id_category.join(',')})` : ''}
-          ${search && search[0] && `${params.id_category ? 'AND' : 'WHERE'} ${search.map(v => `${v.key} LIKE '%${v.value}%'`).join(' AND ')}`}
-          ORDER BY ${sort.map(v => `${v.key} ${!v.value ? 'ASC' : 'DESC'}`).join(' , ')}
+          ${params.id_category ? `WHERE I.id_category IN (${params.id_category.join(',')})` : ''}
+          ${search && search[0] && `${params.id_category ? 'AND' : 'WHERE'} ${search.map(v => `I.${v.key} LIKE '%${v.value}%'`).join(' AND ')}`}
+          ORDER BY ${sort.map(v => `I.${v.key} ${!v.value ? 'ASC' : 'DESC'}`).join(' , ')}
           ${(parseInt(currentPage) && parseInt(perPage)) ? `LIMIT ${parseInt(perPage)} 
           OFFSET ${(parseInt(currentPage) - 1) * parseInt(perPage)}` : ''}
          `
       runQuery(`
-        SELECT COUNT(*) AS total from items ${condition.substring(0, condition.indexOf('LIMIT'))};
+        SELECT COUNT(*) AS total from items I ${condition.substring(0, condition.indexOf('LIMIT'))};
         SELECT I._id,I.id_restaurant,R.name as name_restoran,I.id_category,IC.name as name_category,I.name,I.price,I.quantity,I.description,I.images,I.created_at,I.updated_at from items I JOIN restaurants R ON I.id_restaurant=R._id JOIN itemCategories IC ON I.id_category=IC._id  ${condition}
       `, (err, results, fields) => {
         if (err) {
