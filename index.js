@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const path = require('path')
 const app = express()
+const cors= require('cors')
 require('dotenv').config()
 /* Import Controllers */
 const { TopUp, Verify, ForgotPassword } = require('./src/controllers/users')
@@ -24,16 +25,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 const checkAuthToken = require('./src/middleware/authMiddleware')
 
 /* CSRF settings */
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Requested-With, Accept, Authorization')
-  if (req.method === 'OPTIONS') {
-    res.header('Acces-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE')
-    return res.status(200).send({})
-  }
-  next()
-})
-
+app.use(cors())
 /* Set ROUTES */
 
 /* Redirect To api Docs */
