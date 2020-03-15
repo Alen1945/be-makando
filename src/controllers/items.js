@@ -56,7 +56,7 @@ exports.GetAllItem = async (req, res, next) => {
     if (dataItems.results.length > 0) {
       res.status(200).send({
         success: true,
-        data: dataItems.results,
+        dataItems: dataItems.results,
         pagination
       })
     } else {
