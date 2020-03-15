@@ -10,7 +10,7 @@ exports.GetUserCart = (idCart, idUser, includeItem) => {
       })
     } else {
       runQuery(`
-      SELECT _id,id_item,name_item,total_items,total_price FROM carts WHERE id_user=${idUser} AND is_check_out=0;
+      SELECT C._id,C.id_item,C.name_item,I.images,C.total_items,C.total_price FROM carts C INNER JOIN items I ON C.id_item=I._id WHERE id_user=${idUser} AND is_check_out=0;
       SELECT SUM(total_price) AS totalPrice From carts WHERE id_user=${idUser} AND is_check_out=0
       `, (err, results, fields) => {
         if (err) {
