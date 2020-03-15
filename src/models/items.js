@@ -20,7 +20,7 @@ exports.GetItem = (id, params) => {
          `
       runQuery(`
         SELECT COUNT(*) AS total from items I ${condition.substring(0, condition.indexOf('LIMIT'))};
-        SELECT I._id,I.id_restaurant,R.name as name_restoran,I.id_category,IC.name as name_category,I.name,I.price,I.quantity,I.description,I.images,I.created_at,I.updated_at from items I JOIN restaurants R ON I.id_restaurant=R._id JOIN itemCategories IC ON I.id_category=IC._id  ${condition}
+        SELECT I._id,I.id_restaurant,R.name as name_restaurant,I.id_category,IC.name as name_category,I.name,I.price,I.quantity,I.description,I.images,I.created_at,I.updated_at from items I JOIN restaurants R ON I.id_restaurant=R._id JOIN itemCategories IC ON I.id_category=IC._id  ${condition}
       `, (err, results, fields) => {
         if (err) {
           return reject(new Error(err))
