@@ -17,7 +17,7 @@ exports.GetUser = (id) => {
 exports.GetProfile = (id, params) => {
   return new Promise((resolve, reject) => {
     if (id) {
-      runQuery(`SELECT u._id,u.username,p.fullname, p.email,p.balance,p.gender,p.address,p.picture from userProfile p INNER JOIN users u ON p.id_user=u._id WHERE u._id=${id}`,
+      runQuery(`SELECT u._id,u.is_superadmin,u.is_admin,u.username,p.fullname, p.email,p.balance,p.gender,p.address,p.picture from userProfile p INNER JOIN users u ON p.id_user=u._id WHERE u._id=${id}`,
         (error, results, fields) => {
           if (error) {
             return reject(new Error(error))
