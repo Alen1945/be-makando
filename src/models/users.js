@@ -51,7 +51,19 @@ exports.GetProfile = (id, params) => {
     }
   })
 }
-
+exports.GetAdminRestaurant = (id) => {
+  return new Promise((resolve, reject) => {
+    runQuery(`SELECT _id,name from restaurants WHERE id_owner=${id}`,
+      (error, results, fields) => {
+        if (error) {
+          return reject(new Error(error))
+        } else {
+          return resolve(results[1])
+        }
+      }
+    )
+  })
+}
 exports.CreateUser = (data, isAdmin) => {
   return new Promise((resolve, reject) => {
     const { username, password, email } = data

@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const qs = require('qs')
 const { runQuery } = require('../config/db')
-const { GetUser, CreateUser, VerifyUser, GetCodeVerify, ChangePassword, UpdateProfile, GetProfile, DeleteUser } = require('../models/users')
+const { GetUser, CreateUser, VerifyUser, GetCodeVerify, ChangePassword, UpdateProfile, GetProfile, DeleteUser, GetAdminRestaurant } = require('../models/users')
 const { validateUsernamePassword } = require('../utility/validate')
 const uploads = require('../middleware/uploadFiles')
 require('dotenv').config()
@@ -86,6 +86,28 @@ exports.GetProfile = async (req, res, next) => {
       } else {
         throw new Error('Your Account Has been deleted')
       }
+    }
+  } catch (e) {
+    res.status(202).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
+exports.GetAdminRestaurant = async (req, res, next) => {
+  try {
+    const reestaurant = await GetAdminRestaurant(req.auth.id)
+    if (reestaurant) {
+      return res.status(200).send({
+        success: true,
+        data: reestaurant
+      })
+    } else {
+      return res.status(200).send({
+        success: true,
+        data: false,
+        msg: 'You Dont have any restaurant'
+      })
     }
   } catch (e) {
     res.status(202).send({
