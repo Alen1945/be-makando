@@ -283,6 +283,9 @@ exports.TopUp = async (req, res, next) => {
     if (!req.body.nominal_topup) {
       throw new Error('Please Entry nominal_topup')
     }
+    if (req.body.nominal_topup < 0) {
+      throw new Error('Nominal Top Up Must Positif Integer')
+    }
     const dataUser = await GetProfile(req.auth.id)
     const updateBalance = await UpdateProfile(req.auth.id, [{ key: 'balance', value: parseFloat(dataUser.balance) + parseFloat(req.body.nominal_topup) }])
     if (updateBalance) {
