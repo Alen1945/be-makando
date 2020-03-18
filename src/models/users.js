@@ -64,6 +64,35 @@ exports.GetAdminRestaurant = (id) => {
     )
   })
 }
+exports.GetAllAdminItems = (idUser, params) => {
+  return new Promise((resolve, reject) => {
+    const { perPage, currentPage, search, sort } = params
+    const condition = `
+        ${search && search[0] && `WHERE ${search.map(v => `I.${v.key} LIKE '%${v.value}%'`).join(' AND ')}`}
+        ORDER BY ${sort.map(v => `I.${v.key} ${!v.value ? 'ASC' : 'DESC'}`).join(' , ')}
+        ${(parseInt(currentPage) && parseInt(perPage)) ? `LIMIT ${parseInt(perPage)} 
+        OFFSET ${(parseInt(currentPage) - 1) * parseInt(perPage)}` : ''}
+        `
+    runQuery(`
+      SELECT COUNT(I._id) AS total from items I JOIN restaurants R ON I.id_restaurant=R._id AND R.id_owner=${idUser} 
+      JOIN itemCategories IC ON I.id_category=IC._id ${condition.substring(0, condition.indexOf('LIMIT'))};
+      SELECT I._id,I.id_restaurant,R.name as name_restaurant,I.id_category,IC.name as name_category,
+      I.name,I.price,I.quantity,I.description,I.images,I.created_at,I.updated_at 
+      from items I JOIN restaurants R ON I.id_restaurant=R._id AND R.id_owner=${idUser} 
+      JOIN itemCategories IC ON I.id_category=IC._id  ${condition}
+    `, (err, results, fields) => {
+      if (err) {
+        return reject(new Error(err))
+      }
+      if (results[1][0]) {
+        const { total } = results[1][0]
+        return resolve({ results: results[2], total })
+      } else {
+        return resolve({ results: [], total: 0 })
+      }
+    })
+  })
+}
 exports.CreateUser = (data, isAdmin) => {
   return new Promise((resolve, reject) => {
     const { username, password, email } = data
