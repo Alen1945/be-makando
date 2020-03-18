@@ -134,7 +134,7 @@ exports.CreateRestaurant = async (req, res, next) => {
 exports.UpdateRestaurant = async (req, res, next) => {
   try {
     await uploads(req, res, 'logo')
-    if (!(Object.keys(req.body).length > 0)) {
+    if (!req.file && !(Object.keys(req.body).length > 0)) {
       throw new Error('Please Defined What you want to update')
     }
     const { id } = req.params
