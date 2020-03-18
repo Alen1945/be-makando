@@ -259,12 +259,14 @@ exports.LoginUser = async (req, res, next) => {
             }
           })
       })
+      const dataUser = await GetProfile(dataLogin.id)
       const token = jwt.sign(dataLogin, process.env.APP_KEY, { expiresIn: '1H' })
       res.send({
         success: true,
         msg: 'Login Success',
         data: {
-          token
+          token,
+          dataUser
         }
       })
     } else {
