@@ -281,6 +281,30 @@ exports.LoginUser = async (req, res, next) => {
   }
 }
 
+exports.RefreshToken = async (req, res, next) => {
+  try {
+    const dataUser = await GetProfile(req.auth.id)
+    const dataPayload = jwt.decode(req.headers.authorization.replace(/Bearer\s*/, ''))
+    delete dataPayload.exp
+    delete dataPayload.iat
+    const token = jwt.sign(dataPayload, process.env.APP_KEY, { expiresIn: '1H' })
+    res.send({
+      success: true,
+      msg: 'Login Success',
+      data: {
+        token,
+        dataUser
+      }
+    })
+  } catch (e) {
+    console.log(e)
+    res.status(401).send({
+      success: false,
+      msg: e.message
+    })
+  }
+}
+
 exports.UpdateUser = async (req, res, next) => {
   try {
     await uploads(req, res, 'picture')
