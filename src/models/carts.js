@@ -2,7 +2,7 @@ const { runQuery } = require('../config/db')
 exports.GetUserCart = (idCart, idUser, includeItem) => {
   return new Promise((resolve, reject) => {
     if (idCart) {
-      runQuery(`SELECT * FROM carts WHERE _id=${idCart} AND id_user=${idUser} AND is_check_out=0`, (err, results, fields) => {
+      runQuery(`SELECT C._id,C.id_item,C.name_item,I.images,C.total_items,C.total_price FROM carts C INNER JOIN items I ON C.id_item=I._id WHERE C._id=${idCart} && C.id_user=${idUser} AND C.is_check_out=0`, (err, results, fields) => {
         if (err) {
           return reject(new Error(err))
         }
@@ -10,7 +10,7 @@ exports.GetUserCart = (idCart, idUser, includeItem) => {
       })
     } else {
       runQuery(`
-      SELECT C._id,C.id_item,C.name_item,I.images,C.total_items,C.total_price FROM carts C INNER JOIN items I ON C.id_item=I._id WHERE id_user=${idUser} AND is_check_out=0;
+      SELECT C._id,C.id_item,C.name_item,I.images,C.total_items,C.total_price FROM carts C INNER JOIN items I ON C.id_item=I._id WHERE C.id_user=${idUser} AND C.is_check_out=0;
       SELECT SUM(total_price) AS totalPrice From carts WHERE id_user=${idUser} AND is_check_out=0
       `, (err, results, fields) => {
         if (err) {
@@ -35,19 +35,20 @@ exports.GetUserCart = (idCart, idUser, includeItem) => {
 exports.AddItem = (idUser, dataItem) => {
   return new Promise((resolve, reject) => {
     const { idItem, nameItem, totalItem, totalPrice } = dataItem
-    runQuery(`SELECT COUNT(*) AS total FROM carts WHERE id_user=${idUser} AND id_item=${idItem} AND is_check_out=0`,
+    runQuery(`SELECT COUNT(_id) AS total, _id FROM carts WHERE id_user=${idUser} AND id_item=${idItem} AND is_check_out=0`,
       (err, results, fields) => {
         if (err) {
           return reject(new Error(err))
         }
-        if (results[1][0].total) {
+        const dataCart = results[1][0]
+        if (dataCart.total) {
           return runQuery(`UPDATE carts SET total_items=total_items+${totalItem},total_price=total_price+${totalPrice} WHERE id_item=${idItem} AND id_user=${idUser} AND is_check_out=0`,
             (err, results, fields) => {
               if (err) {
                 return reject(new Error(err))
               }
-              console.log(results[1].affectedRows)
-              return resolve('update')
+              console.log('datupdate', results[1])
+              return resolve({ status: 'update', idCart: dataCart._id })
             })
         }
         runQuery(`INSERT INTO carts(id_user,id_item,name_item,total_items,total_price) VALUES(${idUser},${idItem},'${nameItem}',${totalItem},${totalPrice})`,
@@ -56,7 +57,8 @@ exports.AddItem = (idUser, dataItem) => {
               console.log(err)
               return reject(new Error(err))
             }
-            return resolve(true)
+            console.log(results[1])
+            return resolve({ status: 'created', idCart: results[1].insertedId })
           })
       })
   })

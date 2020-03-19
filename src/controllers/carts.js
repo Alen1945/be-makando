@@ -27,6 +27,30 @@ exports.GetAllCart = async (req, res, next) => {
   }
 }
 
+exports.GetDetailCart = async (req, res, next) => {
+  try {
+    const idUser = req.auth.id
+    const cart = await GetUserCart(req.params.id, idUser)
+    if (cart) {
+      return res.status(200).send({
+        succces: true,
+        data: cart
+      })
+    } else {
+      return res.status(200).send({
+        succces: true,
+        data: false,
+        msg: `You Cart with id ${req.params.id} Not Exists`
+      })
+    }
+  } catch (e) {
+    console.log(e)
+    res.status(202).send({
+      succces: false,
+      msg: e.message
+    })
+  }
+}
 exports.AddItem = async (req, res, next) => {
   try {
     if (!req.body.id_item || !req.body.total_items) {
@@ -40,7 +64,6 @@ exports.AddItem = async (req, res, next) => {
     if (parseInt(item.quantity) < parseInt(req.body.total_items)) {
       throw new Error(`Not enough items, there are only ${item.quantity} item${item.quantity > 1 ? 's' : ''}`)
     }
-    console.log(item)
     const dataItem = {
       idItem: item._id,
       nameItem: item.name,
@@ -49,14 +72,20 @@ exports.AddItem = async (req, res, next) => {
     }
     const addedItem = await AddItem(idUser, dataItem)
     if (addedItem) {
-      if (addedItem === 'update') {
-        return res.status(201).send({
+      if (addedItem.status === 'update') {
+        return res.status(200).send({
           success: true,
+          data: {
+            idCart: addedItem.idCart
+          },
           msg: 'Item Already In Cart, Update Success'
         })
       } else {
         return res.status(201).send({
           success: true,
+          data: {
+            idCart: addedItem.idCart
+          },
           msg: 'Success Added Item to Cart'
         })
       }
