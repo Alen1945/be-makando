@@ -115,6 +115,9 @@ exports.UpdateItemCart = async (req, res, next) => {
     if (!item) {
       throw new Error('This Item Not Exists AnyMore')
     }
+    if (parseInt(item.quantity) < parseInt(req.body.total_items)) {
+      throw new Error(`Not enough items, there are only ${item.quantity} item${item.quantity > 1 ? 's' : ''}`)
+    }
     const updateItemCart = await UpdateItemCart(idItemCart, idUser, {
       totalItem: req.body.total_items,
       totalPrice: parseFloat(req.body.total_items) * parseFloat(item.price)
