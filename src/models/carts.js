@@ -138,7 +138,7 @@ exports.GetHistoryTransaction = (idUser, params) => {
     CONCAT('"id":',C.id_item),
     CONCAT('"images":"',C.images_item,'"}')
     ) SEPARATOR '----') as listItem FROM transactions T INNER JOIN carts C ON FIND_IN_SET(C._id,T.list_item) > 0
-    GROUP BY T._id
+    WHERE T.id_user=${idUser} GROUP BY T._id
     LIMIT 100 OFFSET ${(parseInt(currentPage) - 1) * parseInt(perPage)}
     `, (err, results) => {
       if (err) {
