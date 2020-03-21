@@ -1,11 +1,10 @@
-const { GetUserCart, UpdateItemCart, AddItem, RemoveItemCart, CheckOutItem } = require('../models/carts')
+const { GetUserCart, UpdateItemCart, AddItem, RemoveItemCart, CheckOutItem, GetHistoryTransaction } = require('../models/carts')
 const { GetItem } = require('../models/items')
 const { GetProfile } = require('../models/users')
 exports.GetAllCart = async (req, res, next) => {
   try {
     const idUser = req.auth.id
     const carts = await GetUserCart(false, idUser, true)
-    console.log(carts)
     if (carts) {
       return res.status(200).send({
         succces: true,
@@ -67,6 +66,7 @@ exports.AddItem = async (req, res, next) => {
     const dataItem = {
       idItem: item._id,
       nameItem: item.name,
+      imagesItem: item.images,
       totalItem: req.body.total_items,
       totalPrice: parseFloat(req.body.total_items) * parseFloat(item.price)
     }
@@ -183,6 +183,40 @@ exports.CheckOutItem = async (req, res, next) => {
     console.log(e)
     res.status(202).send({
       success: false,
+      msg: e.message
+    })
+  }
+}
+
+exports.GetHistoryTransaction = async (req, res, next) => {
+  try {
+    const idUser = req.auth.id
+    const params = {
+      currentPage: req.query.page || 1,
+      perPage: req.query.limit || 5
+    }
+    const historyTrasaction = await GetHistoryTransaction(idUser, params)
+    if (historyTrasaction) {
+      return res.status(200).send({
+        succces: true,
+        data: historyTrasaction.map(v => (
+          {
+            ...v,
+            listItem: v.listItem.split('----').map(v=>JSON.parse(v))
+          }
+        ))
+      })
+    } else {
+      return res.status(200).send({
+        succces: true,
+        data: false,
+        msg: 'history transaction is empty'
+      })
+    }
+  } catch (e) {
+    console.log(e)
+    res.status(202).send({
+      succces: false,
       msg: e.message
     })
   }
