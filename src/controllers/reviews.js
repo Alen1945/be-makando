@@ -165,7 +165,7 @@ exports.GetDetailReview = async (req, res, next) => {
 exports.CreateReview = async (req, res, next) => {
   try {
     const idUser = req.auth.id
-    if (!(req.body.id_item || req.body.rating || req.body.review)) {
+    if (!req.body.id_item || !req.body.rating || !req.body.review) {
       throw new Error('Required id_item, rating and review')
     }
     if (!([1, 2, 3, 4, 5].includes(parseInt(req.body.rating)))) {

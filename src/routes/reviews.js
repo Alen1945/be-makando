@@ -4,7 +4,7 @@ const checkAuthToken = require('../middleware/authMiddleware')
 
 Reviews.get('/', checkAuthToken, GetAllReview)
 Reviews.post('/', checkAuthToken, CreateReview)
-Reviews.get('/:id', GetDetailReview)
+Reviews.get('/:id', checkAuthToken, GetDetailReview)
 Reviews.get('/items/:id', GetAllReviewItem)
 Reviews.patch('/:id', checkAuthToken, UpdateReview)
 Reviews.delete('/:id', checkAuthToken, DeleteReview)
