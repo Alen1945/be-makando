@@ -5,6 +5,7 @@ const cartsT = `
   id_user INT(11) UNSIGNED NOT NULL,
   id_item INT(11) UNSIGNED NOT NULL,
   name_item VARCHAR(60) NOT NULL,
+  images_item TEXT,
   total_items INT(11) UNSIGNED DEFAULT 0,
   total_price DECIMAL(10,2) UNSIGNED NOT NULL,
   is_check_out TINYINT(1) DEFAULT 0,
@@ -12,8 +13,8 @@ const cartsT = `
   updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
 )
 `
-const transcationsT = `
-  CREATE TABLE IF NOT EXISTS transcations(
+const transactionsT = `
+  CREATE TABLE IF NOT EXISTS transactions(
     _id INT(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     id_user INT(11) UNSIGNED NOT NULL,
     list_item TEXT,
@@ -29,19 +30,19 @@ const cartsF = `
     FOREIGN KEY (id_user) REFERENCES users(_id)
     ON DELETE CASCADE
 `
-const transcationsF = `
-    ALTER TABLE transcations
-    DROP CONSTRAINT IF EXISTS FK_User_Transcation;
-    ALTER TABLE transcations
-    ADD CONSTRAINT FK_User_Transcation
+const transactionsF = `
+    ALTER TABLE transactions
+    DROP CONSTRAINT IF EXISTS FK_User_Transaction;
+    ALTER TABLE transactions
+    ADD CONSTRAINT FK_User_Transaction
       FOREIGN KEY (id_user) REFERENCES users(_id)
       ON DELETE CASCADE
 `
 exports.queryTable = [
   cartsT,
-  transcationsT
+  transactionsT
 ]
 exports.queryForeign = [
   cartsF,
-  transcationsF
+  transactionsF
 ]
