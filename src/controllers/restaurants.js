@@ -217,6 +217,7 @@ exports.UpdateRestaurant = async (req, res, next) => {
     if (!req.file && !(Object.keys(req.body).length > 0)) {
       throw new Error('Please Defined What you want to update')
     }
+    console.log(req.body)
     const { id } = req.params
     const dataRestaurant = await GetRestaurants(id)
     const dataOwner = await GetUser(req.auth.id)
@@ -229,7 +230,7 @@ exports.UpdateRestaurant = async (req, res, next) => {
         msg: 'To Update You Must Superadmin Or Owner of this Restaurant'
       })
     }
-    const fillable = ['name', 'logo', 'address', 'decription']
+    const fillable = ['name', 'logo', 'address', 'description']
     const params = fillable.map((v) => {
       if (v && req.body[v]) {
         return { key: v, value: req.body[v] }
