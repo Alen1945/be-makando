@@ -7,12 +7,12 @@ exports.GetAllCart = async (req, res, next) => {
     const carts = await GetUserCart(false, idUser, true)
     if (carts) {
       return res.status(200).send({
-        succces: true,
+        success: true,
         data: carts
       })
     } else {
       return res.status(200).send({
-        succces: true,
+        success: true,
         data: false,
         msg: 'Data Cart Is Empty'
       })
@@ -20,7 +20,7 @@ exports.GetAllCart = async (req, res, next) => {
   } catch (e) {
     console.log(e)
     res.status(202).send({
-      succces: false,
+      success: false,
       msg: e.message
     })
   }
@@ -32,12 +32,12 @@ exports.GetDetailCart = async (req, res, next) => {
     const cart = await GetUserCart(req.params.id, idUser)
     if (cart) {
       return res.status(200).send({
-        succces: true,
+        success: true,
         data: cart
       })
     } else {
       return res.status(200).send({
-        succces: true,
+        success: true,
         data: false,
         msg: `You Cart with id ${req.params.id} Not Exists`
       })
@@ -45,7 +45,7 @@ exports.GetDetailCart = async (req, res, next) => {
   } catch (e) {
     console.log(e)
     res.status(202).send({
-      succces: false,
+      success: false,
       msg: e.message
     })
   }
@@ -94,7 +94,7 @@ exports.AddItem = async (req, res, next) => {
   } catch (e) {
     console.log(e)
     res.status(202).send({
-      succces: false,
+      success: false,
       msg: e.message
     })
   }
@@ -133,7 +133,7 @@ exports.UpdateItemCart = async (req, res, next) => {
   } catch (e) {
     console.log(e)
     res.status(202).send({
-      succces: false,
+      success: false,
       msg: e.message
     })
   }
@@ -198,7 +198,7 @@ exports.GetHistoryTransaction = async (req, res, next) => {
     const historyTrasaction = await GetHistoryTransaction(idUser, params)
     if (historyTrasaction) {
       return res.status(200).send({
-        succces: true,
+        success: true,
         data: historyTrasaction.map(v => (
           {
             ...v,
@@ -216,7 +216,7 @@ exports.GetHistoryTransaction = async (req, res, next) => {
   } catch (e) {
     console.log(e)
     res.status(202).send({
-      succces: false,
+      success: false,
       msg: e.message
     })
   }
