@@ -58,7 +58,7 @@ exports.AddItem = (idUser, dataItem) => {
               return reject(new Error(err))
             }
             console.log(results[1])
-            return resolve({ status: 'created', idCart: results[1].insertedId })
+            return resolve({ status: 'created', idCart: results[1].insertId })
           })
       })
   })
