@@ -260,7 +260,7 @@ exports.LoginUser = async (req, res, next) => {
           })
       })
       const dataUser = await GetProfile(dataLogin.id)
-      const token = jwt.sign(dataLogin, process.env.APP_KEY, { expiresIn: '1H' })
+      const token = jwt.sign(dataLogin, process.env.APP_KEY, { expiresIn: '1D' })
       res.send({
         success: true,
         msg: 'Login Success',
@@ -287,7 +287,7 @@ exports.RefreshToken = async (req, res, next) => {
     const dataPayload = jwt.decode(req.headers.authorization.replace(/Bearer\s*/, ''))
     delete dataPayload.exp
     delete dataPayload.iat
-    const token = jwt.sign(dataPayload, process.env.APP_KEY, { expiresIn: '1H' })
+    const token = jwt.sign(dataPayload, process.env.APP_KEY, { expiresIn: '1D' })
     res.send({
       success: true,
       msg: 'Login Success',

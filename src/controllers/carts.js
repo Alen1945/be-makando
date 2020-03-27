@@ -208,7 +208,7 @@ exports.GetHistoryTransaction = async (req, res, next) => {
       })
     } else {
       return res.status(200).send({
-        succces: true,
+        success: true,
         data: false,
         msg: 'history transaction is empty'
       })
